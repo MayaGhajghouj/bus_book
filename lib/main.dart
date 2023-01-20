@@ -5,7 +5,7 @@ import 'package:bus_book/moduls/login/logIn_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'moduls/app/mainscreen.dart';
+import 'moduls/app/mainpage.dart';
 import 'moduls/app/my_account_screen.dart';
 
 void main() {
