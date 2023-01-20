@@ -1,12 +1,12 @@
 import 'package:bus_book/DAtabase.dart';
-import 'package:bus_book/moduls/app/week_table_screen.dart';
-import 'package:bus_book/shared/loginCubit/cubit.dart';
-import 'package:bus_book/moduls/app/logIn_screen.dart';
+import 'package:bus_book/moduls/week_table_screen.dart';
+import 'package:bus_book/shared/loginCubit/logincubit.dart';
+import 'package:bus_book/moduls/logIn_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'moduls/app/mainpage.dart';
-import 'moduls/app/my_account_screen.dart';
+import 'moduls/mainpage.dart';
+import 'moduls/my_account_screen.dart';
 
 void main() {
   runApp(MyApp());

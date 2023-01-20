@@ -5,7 +5,7 @@ import 'package:bus_book/models/bus.dart';
 import 'package:bus_book/models/driver.dart';
 import 'package:bus_book/models/reservation.dart';
 import 'package:bus_book/models/trip.dart';
-import 'package:bus_book/moduls/app/my_account_screen.dart';
+import 'package:bus_book/moduls/my_account_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/constant.dart';
 import 'package:bus_book/shared/lists.dart';
@@ -14,7 +14,7 @@ import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
-import '../../moduls/app/week_table_screen.dart';
+import '../../moduls/week_table_screen.dart';
 import '../componants.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -88,7 +88,7 @@ class AppCubit extends Cubit<AppStates> {
 
   //****************************** DAtaBase connection **************************************************
 
-  var settings =  ConnectionSettings(
+  var settings = ConnectionSettings(
       host: '10.0.2.2',
       port: 3306,
       user: 'root',
@@ -97,23 +97,21 @@ class AppCubit extends Cubit<AppStates> {
   MySqlConnection? conn;
   List<String> mydata = [];
 
-  Future<void> connectToDB() async
-  {
+  Future<void> connectToDB() async {
     emit(ConnectingToMySql());
     conn = await MySqlConnection.connect(settings);
     emit(ConnectedToMySql());
-
   }
-  Future<void> getdata()async{
-    await  getDriver();
-    await  getBus();
-    await  getTrip();
-    await  getReservation();
+
+  Future<void> getdata() async {
+    await getDriver();
+    await getBus();
+    await getTrip();
+    await getReservation();
     emit(GetDataFromDB());
-
   }
-  Future<void> disconnectToDB() async
-  {
+
+  Future<void> disconnectToDB() async {
     emit(DisConnectingToMySql());
     await conn!.close();
     emit(DisConnectedToMySql());
@@ -121,59 +119,50 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 //*****************************************************
-  Future<void> getDriver() async
-  {
-    if(conn==null) {
+  Future<void> getDriver() async {
+    if (conn == null) {
       print("null             null");
       return;
     }
     Lists.drivers.clear();
-      Results res = await conn!.query('select * from driver');
+    Results res = await conn!.query('select * from driver');
     for (var row in res) {
       Lists.drivers.add(Driver.FromDB(row));
     }
   }
+
   //*****************************************************
-  Future<void> getBus() async
-  {
+  Future<void> getBus() async {
     Lists.buses.clear();
     Results res = await conn!.query('select * from bus');
-    for (var row in res){
+    for (var row in res) {
       Lists.buses.add(Bus.FromDB(row));
     }
-
   }
+
   //*****************************************************
-  Future<void> getTrip() async
-  {
+  Future<void> getTrip() async {
     Lists.trips.clear();
     Results res = await conn!.query('select * from trip');
-    for (var row in res)
-      Lists.trips.add(Trip.FromDB(row));
-
+    for (var row in res) Lists.trips.add(Trip.FromDB(row));
   }
+
   //*****************************************************
-  Future<void> getReservation() async
-  {
+  Future<void> getReservation() async {
     Lists.reserves.clear();
-    Results res = await conn!.query('select * from reservation where resrervation_user_id=? ',[4]);
-    for (var row in res)
-      Lists.reserves.add(Reservation.FromDB(row));
-
+    Results res = await conn!
+        .query('select * from reservation where resrervation_user_id=? ', [4]);
+    for (var row in res) Lists.reserves.add(Reservation.FromDB(row));
   }
+
   //*****************************************************
   // 1.id 2.name 3.phone 4.address 5.email 6.password
-  Future<void> insertSignUp(List<String> Controllers)async
-  {/*
+  Future<void> insertSignUp(List<String> Controllers) async {
+    /*
      var r= await conn!.query('');
     if(Controllers[3])
     var r= await conn!.query('insert into user value(?,?,?) ',[
       Controllers[0],Controllers[1],Controllers[2],Controllers[3],Controllers[4]],
     );*/
-
   }
-
 }
-
-
-
