@@ -8,8 +8,6 @@ import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../shared/snakbar.dart';
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 

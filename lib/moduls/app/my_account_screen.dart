@@ -1,5 +1,5 @@
-import 'package:bus_book/moduls/login/cubit/cubit.dart';
-import 'package:bus_book/moduls/login/cubit/logincubitstate.dart';
+import 'package:bus_book/shared/loginCubit/cubit.dart';
+import 'package:bus_book/shared/loginCubit/logincubitstate.dart';
 import 'package:bus_book/shared/componants.dart';
 import 'package:bus_book/shared/constant.dart';
 import 'package:flutter/material.dart';

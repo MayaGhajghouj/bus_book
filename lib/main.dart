@@ -1,7 +1,7 @@
 import 'package:bus_book/DAtabase.dart';
 import 'package:bus_book/moduls/app/week_table_screen.dart';
-import 'package:bus_book/moduls/login/cubit/cubit.dart';
-import 'package:bus_book/moduls/login/logIn_screen.dart';
+import 'package:bus_book/shared/loginCubit/cubit.dart';
+import 'package:bus_book/moduls/app/logIn_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

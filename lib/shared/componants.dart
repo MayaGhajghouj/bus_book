@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
-
 import 'package:bus_book/models/reservation.dart';
 import 'package:bus_book/models/trip.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
@@ -600,4 +599,16 @@ void AdditonalTrip(context) {
       );
     },
   );
+}
+
+//=============================Snakbar=================================
+mySnackBar(String content, BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      content,
+      style: const TextStyle(color: Colors.white),
+    ),
+    backgroundColor: Colors.red,
+    duration: const Duration(seconds: 1),
+  ));
 }
