@@ -7,6 +7,7 @@ import 'package:bus_book/shared/constant.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -20,6 +21,9 @@ class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
 
+  bool _hasCallSupport = false;
+  Future<void>? _launched;
+  String _phone = '0994033360';
 //****************************************
   @override
   void initState() {
@@ -28,7 +32,22 @@ class _MainPageState extends State<MainPage>
       setState(() {});
     });
     AppCubit.get(context).connectToDB();
+
+    canLaunchUrl(Uri(scheme: 'tel', path: '123')).then((bool result) {
+      setState(() {
+        _hasCallSupport = result;
+      });
+    });
+
     super.initState();
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(launchUri);
   }
 
   @override
@@ -116,7 +135,37 @@ class _MainPageState extends State<MainPage>
                               color: mycolor.blue,
                             ),
                             onPressed: () {
-                              myShowDialog(context);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: mycolor.blue, width: 3),
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        myvalues('اسم المدير', 'محمد أحمد'),
+                                        myvalues('رقم الهاتف', '$_phone'),
+                                        ElevatedButton(
+                                          onPressed: _hasCallSupport
+                                              ? () => setState(() {
+                                                    _launched =
+                                                        _makePhoneCall(_phone);
+                                                  })
+                                              : null,
+                                          child: _hasCallSupport
+                                              ? const Text('Make phone call')
+                                              : const Text(
+                                                  'Calling not supported'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
                             },
                           ),
                         ],

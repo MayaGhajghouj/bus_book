@@ -5,7 +5,6 @@ import 'package:bus_book/models/bus.dart';
 import 'package:bus_book/models/driver.dart';
 import 'package:bus_book/models/reservation.dart';
 import 'package:bus_book/models/trip.dart';
-import 'package:bus_book/moduls/my_account_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/constant.dart';
 import 'package:bus_book/shared/lists.dart';
@@ -14,8 +13,6 @@ import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
-import '../../moduls/week_table_screen.dart';
-import '../componants.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialAppState());

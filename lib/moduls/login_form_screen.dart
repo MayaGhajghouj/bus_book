@@ -19,6 +19,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
 //**************************************************************
   @override
   Widget build(BuildContext context) {
+    LoginCubit MyLogincubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (BuildContext context, Object? state) {},
       builder: (BuildContext context, state) {
@@ -28,7 +29,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
             child: Column(
               children: [
                 DefoultFormField(
-                  controller: Emailcontroller,
+                  controller: MyLogincubit.Emailcontroller,
                   myhinttext: 'الايميل ',
                   suffixicon: Icons.email,
                   typeofkeybord: TextInputType.emailAddress,
@@ -41,22 +42,30 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                  controller: passwordcontroller,
+                  controller: MyLogincubit.passwordcontroller,
                   myhinttext: 'كلمة المرور ',
                   suffixicon: Icons.remove_red_eye_outlined,
                   typeofkeybord: TextInputType.text,
                   mytextalign: TextAlign.end,
-                  prefix: LoginCubit.get(context).prefix,
-                  ispassword: LoginCubit.get(context).ispassword,
+                  prefix: MyLogincubit.prefix,
+                  ispassword: MyLogincubit.ispassword,
                   prefixpressed: () {
-                    LoginCubit.get(context).changepasswordvisibility();
+                    MyLogincubit.changepasswordvisibility();
                   },
-                  validate: (String value) {
-                    if (value.isEmpty) {
-                      return "يجب ادخال كلمة السر ";
-                    }
+                  validate: (String? m) {
+                    if (m!.isEmpty || (m.length < 3 && m.length > 10))
+                      return " يجب ادخال كلمة مرور من حرفين إلى عشر محارف ";
                     return null;
                   },
+                ),
+                DefaultMaterialButton(
+                  context: context,
+                  onpressed: () {
+                    if (formkey.currentState!.validate()) {
+                      print('*****************************************');
+                    }
+                  },
+                  text: "حفظ",
                 ),
               ],
             ),

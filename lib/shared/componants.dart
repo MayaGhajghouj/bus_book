@@ -218,6 +218,7 @@ void myShowDialog(context) {
           children: [
             myvalues('اسم المدير', 'محمد أحمد'),
             myvalues('رقم الهاتف', '0994033360'),
+            owbutton(onpress: () {}),
           ],
         ),
       );
@@ -428,7 +429,7 @@ Widget owbutton({
   required Function onpress,
 }) {
   return Container(
-    margin: EdgeInsets.all(15),
+    margin: EdgeInsets.all(20.0),
     child: MaterialButton(
       color: mycolor.blue,
       shape: StadiumBorder(),
@@ -451,7 +452,7 @@ Widget owbutton({
 
 //*****************************************material button ****************
 Widget DefaultMaterialButton({
-  // i dont use this
+  // i use this in login and signup forms
   required context,
   String? text,
   required Function onpressed,
@@ -460,9 +461,9 @@ Widget DefaultMaterialButton({
     decoration: BoxDecoration(boxShadow: [
       BoxShadow(
         color: Color.fromRGBO(0, 0, 0, 0.541),
-        blurRadius: 15,
+        blurRadius: 10.0,
       ),
-    ], borderRadius: BorderRadius.circular(50), color: mycolor.lightwight),
+    ], borderRadius: BorderRadius.circular(70.0), color: mycolor.blue),
     margin: EdgeInsets.all(15),
     height: 50.0,
     width: WidthOfScreen(context),
@@ -473,7 +474,9 @@ Widget DefaultMaterialButton({
         textAlign: TextAlign.center,
         textDirection: TextDirection.rtl,
         style: TextStyle(
-            fontSize: 25.0, fontWeight: FontWeight.bold, color: mycolor.blue),
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: mycolor.lightwight),
       ),
     ),
   );

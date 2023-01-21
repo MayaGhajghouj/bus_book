@@ -94,20 +94,17 @@ class _LogInScreenState extends State<LogInScreen>
                     padding: const EdgeInsets.all(20.0),
                     child: Container(
                       height: _controller.index == 1
-                          ? HieghtOfScreen(context) * 0.33
-                          : HieghtOfScreen(context) * 0.66,
+                          ? HieghtOfScreen(context) * 0.5
+                          : HieghtOfScreen(context) * 0.70,
                       decoration: BoxDecoration(
                         color: Color(0XFffecf3f9),
-                        borderRadius: BorderRadiusDirectional.only(
-                          topStart: Radius.circular(50.0),
-                          topEnd: Radius.circular(50.0),
-                          bottomEnd: Radius.circular(0.0),
-                          bottomStart: Radius.circular(0.0),
+                        borderRadius: BorderRadiusDirectional.all(
+                          Radius.circular(50.0),
                         ),
                         boxShadow: [
                           BoxShadow(
                             blurRadius: 30.0,
-                            spreadRadius: 1.0,
+                            spreadRadius: 3.0,
                           ),
                         ],
                       ),
@@ -143,16 +140,6 @@ class _LogInScreenState extends State<LogInScreen>
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: _controller.index == 0 ? 650 : 530,
-                  left: 170,
-                  child: submitbutton(
-                      mytext: 'ارسال',
-                      myfontcolor: Colors.white,
-                      pressthisbutton: () {
-                        if (_controller.index == 0) {}
-                      }),
                 ),
               ], //stack
             ),
