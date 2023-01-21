@@ -100,38 +100,6 @@ Widget DefoultFormField({
   );
 }
 
-//============================================================
-Widget mysizedbox({
-  double? myheight,
-  double? mywidth,
-}) {
-  return SizedBox(
-    height: myheight,
-    width: mywidth,
-  );
-}
-
-//==============================================================
-Widget submitbutton({
-  //for login signup screen
-  required String mytext,
-  Color? myfontcolor,
-  required void Function() pressthisbutton,
-}) {
-  return FloatingActionButton(
-    backgroundColor: Color(0XFF7fbcd2),
-    onPressed: pressthisbutton,
-    child: Text(
-      mytext,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 15.0,
-        color: myfontcolor,
-      ),
-    ),
-  );
-}
-
 //====================================================================================
 void MyDropdown({
   required TextEditingController controller,
@@ -163,28 +131,6 @@ void MyDropdown({
     ),
   ).showModal(context);
 }
-
-//******************************************************************************* */
-void GoforWard(context, Widget myscreen) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) {
-      return myscreen;
-    }),
-  );
-}
-//***************************MesureOfScreen**************************************** */
-
-double HieghtOfScreen(context) {
-  double Heightofscreen = MediaQuery.of(context).size.height;
-  return Heightofscreen;
-}
-
-double WidthOfScreen(context) {
-  double Widthtofscreen = MediaQuery.of(context).size.width;
-  return Widthtofscreen;
-}
-
 //************************************************************************* */
 
 Widget myStandardScreen(context) {
@@ -258,7 +204,7 @@ myvalues(String k, String v) {
   );
 }
 
-//******************************************************************** */
+//************************* Manager information******************************************* */
 void myShowDialog(context) {
   showDialog(
     context: context,
@@ -278,7 +224,7 @@ void myShowDialog(context) {
     },
   );
 }
-//******************************************************************** */
+//************************** Trip information ****************************************** */
 
 mycard({
   context,
@@ -533,6 +479,27 @@ Widget DefaultMaterialButton({
   );
 }
 
+//==============================================================
+Widget submitbutton({
+  //for login signup screen
+  required String mytext,
+  Color? myfontcolor,
+  required void Function() pressthisbutton,
+}) {
+  return FloatingActionButton(
+    backgroundColor: Color(0XFF7fbcd2),
+    onPressed: pressthisbutton,
+    child: Text(
+      mytext,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 15.0,
+        color: myfontcolor,
+      ),
+    ),
+  );
+}
+
 //===========================AdditionalTrip============================================
 void AdditonalTrip(context) {
   showDialog(
@@ -611,4 +578,36 @@ mySnackBar(String content, BuildContext context) {
     backgroundColor: Colors.red,
     duration: const Duration(seconds: 1),
   ));
+}
+
+//******************************************************************************* */
+void GoforWard(context, Widget myscreen) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) {
+      return myscreen;
+    }),
+  );
+}
+//***************************MesureOfScreen**************************************** */
+
+double HieghtOfScreen(context) {
+  double Heightofscreen = MediaQuery.of(context).size.height;
+  return Heightofscreen;
+}
+
+double WidthOfScreen(context) {
+  double Widthtofscreen = MediaQuery.of(context).size.width;
+  return Widthtofscreen;
+}
+
+//============================================================
+Widget mysizedbox({
+  double? myheight,
+  double? mywidth,
+}) {
+  return SizedBox(
+    height: myheight,
+    width: mywidth,
+  );
 }
