@@ -3,7 +3,7 @@ import 'package:bus_book/moduls/week_table_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/componants.dart';
-import 'package:bus_book/shared/constant.dart';
+import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,12 +60,7 @@ class _MainPageState extends State<MainPage>
   Widget build(BuildContext context) {
     AppCubit MyAppcubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (BuildContext context, Object? state) {
-        mySnackBar(state.toString(), context);
-        if (state is ConnectedToMySql) {
-          MyAppcubit.getdata();
-        }
-      },
+      listener: (BuildContext context, Object? state) {},
       builder: (BuildContext context, state) {
         return Container(
           decoration: BoxDecoration(
@@ -183,8 +178,14 @@ class _MainPageState extends State<MainPage>
                     ),
                     Expanded(
                       child: TabBarView(controller: _controller, children: [
-                        MyListOfTrips(context),
-                        MyListOfTrips(context),
+                        Container(
+                          color: mycolor.blue,
+                        ),
+                        Container(
+                          color: mycolor.yello,
+                        ),
+                        // MyListOfTrips(context),
+                        // MyListOfTrips(context),
                       ]),
                     ),
                   ],

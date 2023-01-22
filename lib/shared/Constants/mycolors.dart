@@ -6,5 +6,3 @@ class mycolor {
   static Color lightblack = Color(0xff61000000);
   static Color lightwight = Color(0XFffecf3f9);
 }
-
-

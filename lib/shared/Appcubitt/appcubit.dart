@@ -6,7 +6,7 @@ import 'package:bus_book/models/driver.dart';
 import 'package:bus_book/models/reservation.dart';
 import 'package:bus_book/models/trip.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
-import 'package:bus_book/shared/constant.dart';
+import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:bus_book/shared/lists.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:dropdown_plus/dropdown_plus.dart';
@@ -100,66 +100,66 @@ class AppCubit extends Cubit<AppStates> {
     emit(ConnectedToMySql());
   }
 
-  Future<void> getdata() async {
-    await getDriver();
-    await getBus();
-    await getTrip();
-    await getReservation();
-    emit(GetDataFromDB());
-  }
+//   Future<void> getdata() async {
+//     await getDriver();
+//     await getBus();
+//     await getTrip();
+//     await getReservation();
+//     emit(GetDataFromDB());
+//   }
 
-  Future<void> disconnectToDB() async {
-    emit(DisConnectingToMySql());
-    await conn!.close();
-    emit(DisConnectedToMySql());
-    print('Disconnected ****************');
-  }
+//   Future<void> disconnectToDB() async {
+//     emit(DisConnectingToMySql());
+//     await conn!.close();
+//     emit(DisConnectedToMySql());
+//     print('Disconnected ****************');
+//   }
 
-//*****************************************************
-  Future<void> getDriver() async {
-    if (conn == null) {
-      print("null             null");
-      return;
-    }
-    Lists.drivers.clear();
-    Results res = await conn!.query('select * from driver');
-    for (var row in res) {
-      Lists.drivers.add(Driver.FromDB(row));
-    }
-  }
+// //*****************************************************
+//   Future<void> getDriver() async {
+//     if (conn == null) {
+//       print("null             null");
+//       return;
+//     }
+//     Lists.drivers.clear();
+//     Results res = await conn!.query('select * from driver');
+//     for (var row in res) {
+//       Lists.drivers.add(Driver.FromDB(row));
+//     }
+//   }
 
-  //*****************************************************
-  Future<void> getBus() async {
-    Lists.buses.clear();
-    Results res = await conn!.query('select * from bus');
-    for (var row in res) {
-      Lists.buses.add(Bus.FromDB(row));
-    }
-  }
+//   //*****************************************************
+//   Future<void> getBus() async {
+//     Lists.buses.clear();
+//     Results res = await conn!.query('select * from bus');
+//     for (var row in res) {
+//       Lists.buses.add(Bus.FromDB(row));
+//     }
+//   }
 
-  //*****************************************************
-  Future<void> getTrip() async {
-    Lists.trips.clear();
-    Results res = await conn!.query('select * from trip');
-    for (var row in res) Lists.trips.add(Trip.FromDB(row));
-  }
+//   //*****************************************************
+//   Future<void> getTrip() async {
+//     Lists.trips.clear();
+//     Results res = await conn!.query('select * from trip');
+//     for (var row in res) Lists.trips.add(Trip.FromDB(row));
+//   }
 
-  //*****************************************************
-  Future<void> getReservation() async {
-    Lists.reserves.clear();
-    Results res = await conn!
-        .query('select * from reservation where resrervation_user_id=? ', [4]);
-    for (var row in res) Lists.reserves.add(Reservation.FromDB(row));
-  }
+//   //*****************************************************
+//   Future<void> getReservation() async {
+//     Lists.reserves.clear();
+//     Results res = await conn!
+//         .query('select * from reservation where resrervation_user_id=? ', [4]);
+//     for (var row in res) Lists.reserves.add(Reservation.FromDB(row));
+//   }
 
-  //*****************************************************
-  // 1.id 2.name 3.phone 4.address 5.email 6.password
-  Future<void> insertSignUp(List<String> Controllers) async {
-    /*
-     var r= await conn!.query('');
-    if(Controllers[3])
-    var r= await conn!.query('insert into user value(?,?,?) ',[
-      Controllers[0],Controllers[1],Controllers[2],Controllers[3],Controllers[4]],
-    );*/
-  }
+//   //*****************************************************
+//   // 1.id 2.name 3.phone 4.address 5.email 6.password
+//   Future<void> insertSignUp(List<String> Controllers) async {
+//     /*
+//      var r= await conn!.query('');
+//     if(Controllers[3])
+//     var r= await conn!.query('insert into user value(?,?,?) ',[
+//       Controllers[0],Controllers[1],Controllers[2],Controllers[3],Controllers[4]],
+//     );*/
+//   }
 }

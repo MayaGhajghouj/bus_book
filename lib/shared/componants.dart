@@ -3,7 +3,7 @@
 import 'package:bus_book/models/reservation.dart';
 import 'package:bus_book/models/trip.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
-import 'package:bus_book/shared/constant.dart';
+import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:bus_book/shared/lists.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
@@ -225,110 +225,7 @@ void myShowDialog(context) {
     },
   );
 }
-//************************** Trip information ****************************************** */
 
-mycard({
-  context,
-  required Driver driver,
-  required Bus bus,
-  required Trip trip,
-  required Reservation reservation,
-}) {
-  return InkWell(
-    onTap: () {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: mycolor.blue, width: 3),
-                borderRadius: BorderRadius.circular(30)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                myvalues('السائق', driver.driver_name),
-                myvalues(' رقم الهاتف', driver.driver_phone),
-                myvalues('نوع الباص', bus.bus_type),
-                myvalues('رقم الباص', bus.bus_number.toString()),
-              ],
-            ),
-          );
-        },
-      );
-    },
-    child: Card(
-      elevation: 10,
-      margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                    onPressed: () {},
-                    color: mycolor.blue,
-                    icon: Icon(Icons.delete_forever)),
-                IconButton(
-                    onPressed: () {},
-                    color: mycolor.blue,
-                    icon: Icon(Icons.edit)),
-              ],
-            ),
-          ),
-          Expanded(
-              flex: 3,
-              child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                myvalues(
-                    'وقت الرحلة ', trip.trip_time.toString().substring(0, 8)),
-                myvalues(
-                    'تاريخ الرحلة', trip.trip_date.toString().substring(0, 10)),
-                myvalues(
-                    'وقت وصول الباص',
-                    reservation.reservation_arrive_time
-                        .toString()
-                        .substring(0, 8)),
-                myvalues('نوع الرحلة', trip.trip_type),
-              ]))
-        ],
-      ),
-    ),
-  );
-}
-
-//*************************************************************
-Widget MyListOfTrips(context) {
-// code meshooooooooooooooooooooooooo
-  return ListView.separated(
-    itemBuilder: (context, index) {
-      Reservation r = Lists.reserves[index];
-      Trip t = Lists.trips
-          .where((element) => element.trip_id == r.reservatin_trip_id)
-          .first;
-      Bus b = Lists.buses.where((element) => element.bus_id == t.bus_id).first;
-      Driver d = Lists.drivers
-          .where((element) => element.driver_id == t.driver_id)
-          .first;
-      return mycard(
-        context: context,
-        driver: d,
-        bus: b,
-        reservation: r,
-        trip: t,
-      );
-    },
-    separatorBuilder: (context, index) {
-      return SizedBox(
-        height: 0.0,
-      );
-    },
-    itemCount: Lists.reserves.length,
-  );
-}
 //******************BuildItemofWeekTable***********************************
 
 Widget BuildItemofWeekTable({
@@ -571,18 +468,6 @@ void AdditonalTrip(context) {
   );
 }
 
-//=============================Snakbar=================================
-mySnackBar(String content, BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(
-      content,
-      style: const TextStyle(color: Colors.white),
-    ),
-    backgroundColor: Colors.red,
-    duration: const Duration(seconds: 1),
-  ));
-}
-
 //******************************************************************************* */
 void GoforWard(context, Widget myscreen) {
   Navigator.push(
@@ -614,3 +499,125 @@ Widget mysizedbox({
     width: mywidth,
   );
 }
+
+//=============================Snakbar=================================
+mySnackBar(
+    String content, BuildContext context, Color background, Color textColor) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      content,
+      style: TextStyle(color: textColor),
+    ),
+    backgroundColor: background,
+    duration: const Duration(milliseconds: 1500),
+  ));
+}
+//********************** */
+//*************************************************************
+// Widget MyListOfTrips(context) {
+// // code meshooooooooooooooooooooooooo
+//   return ListView.separated(
+//     itemBuilder: (context, index) {
+//       Reservation r = Lists.reserves[index];
+//       Trip t = Lists.trips
+//           .where((element) => element.trip_id == r.reservatin_trip_id)
+//           .first;
+//       Bus b = Lists.buses.where((element) => element.bus_id == t.bus_id).first;
+//       Driver d = Lists.drivers
+//           .where((element) => element.driver_id == t.driver_id)
+//           .first;
+//       return mycard(
+//         context: context,
+//         driver: d,
+//         bus: b,
+//         reservation: r,
+//         trip: t,
+//       );
+//     },
+//     separatorBuilder: (context, index) {
+//       return SizedBox(
+//         height: 0.0,
+//       );
+//     },
+//     itemCount: Lists.reserves.length,
+//   );
+// }
+//=====================================================
+
+//************************** Trip information ****************************************** */
+
+// mycard({
+//   context,
+//   required Driver driver,
+//   required Bus bus,
+//   required Trip trip,
+//   required Reservation reservation,
+// }) {
+//   return InkWell(
+//     onTap: () {
+//       showDialog(
+//         context: context,
+//         builder: (context) {
+//           return AlertDialog(
+//             shape: RoundedRectangleBorder(
+//                 side: BorderSide(color: mycolor.blue, width: 3),
+//                 borderRadius: BorderRadius.circular(30)),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 myvalues('السائق', driver.driver_name),
+//                 myvalues(' رقم الهاتف', driver.driver_phone),
+//                 myvalues('نوع الباص', bus.bus_type),
+//                 myvalues('رقم الباص', bus.bus_number.toString()),
+//               ],
+//             ),
+//           );
+//         },
+//       );
+//     },
+//     child: Card(
+//       elevation: 10,
+//       margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceAround,
+//         children: [
+//           Expanded(
+//             flex: 1,
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//               children: [
+//                 IconButton(
+//                     onPressed: () {},
+//                     color: mycolor.blue,
+//                     icon: Icon(Icons.delete_forever)),
+//                 IconButton(
+//                     onPressed: () {},
+//                     color: mycolor.blue,
+//                     icon: Icon(Icons.edit)),
+//               ],
+//             ),
+//           ),
+//           Expanded(
+//               flex: 3,
+//               child:
+//                   Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+//                 myvalues(
+//                     'وقت الرحلة ', trip.trip_time.toString().substring(0, 8)),
+//                 myvalues(
+//                     'تاريخ الرحلة', trip.trip_date.toString().substring(0, 10)),
+//                 myvalues(
+//                     'وقت وصول الباص',
+//                     reservation.reservation_arrive_time
+//                         .toString()
+//                         .substring(0, 8)),
+//                 myvalues('نوع الرحلة', trip.trip_type),
+//               ]))
+//         ],
+//       ),
+//     ),
+//   );
+// }
+
+
+
