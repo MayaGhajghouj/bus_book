@@ -150,6 +150,17 @@ class _MainPageState extends State<MainPage>
                                         myvalues('اسم المدير', 'محمد أحمد'),
                                         myvalues('رقم الهاتف', '$_phone'),
                                         ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            primary: mycolor.blue,
+                                            side: BorderSide(
+                                              width: 3.0,
+                                              color: mycolor.lightwight,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                          ),
                                           onPressed: _hasCallSupport
                                               ? () => setState(() {
                                                     _launched =
@@ -157,9 +168,8 @@ class _MainPageState extends State<MainPage>
                                                   })
                                               : null,
                                           child: _hasCallSupport
-                                              ? const Text('Make phone call')
-                                              : const Text(
-                                                  'Calling not supported'),
+                                              ? const Text('انقر للاتصال ')
+                                              : const Text('الاتصال غير متاح'),
                                         ),
                                       ],
                                     ),
