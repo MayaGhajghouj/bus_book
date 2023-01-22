@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage>
     _controller.addListener(() {
       setState(() {});
     });
-    AppCubit.get(context).connectToDB();
+    // AppCubit.get(context).connectToDB();
 
     canLaunchUrl(Uri(scheme: 'tel', path: '123')).then((bool result) {
       setState(() {

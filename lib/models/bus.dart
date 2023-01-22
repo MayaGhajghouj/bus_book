@@ -1,35 +1,19 @@
 import 'package:mysql1/mysql1.dart';
 
 class Bus {
+  int? busId;
+  int busNumber;
+  int busSeats;
+  String busType;
 
- int? bus_id;
- int bus_number;
- int bus_seats;
- String bus_type;
-Bus({
-  this.bus_id,
- required this. bus_number,
-  required this. bus_seats,
- required this. bus_type,
-});
- static Bus FromDB (ResultRow row)
- {
-   return Bus(
-    bus_id: row[0],
-       bus_number:row[1],
-       bus_seats: row[2],
-       bus_type: row[3]);
- }
-@override
-  String toString() {
-    return "$bus_id ,$bus_type , $bus_number , $bus_seats ";
+  Bus(
+      {this.busId,
+      required this.busNumber,
+      required this.busSeats,
+      required this.busType});
+
+  static Bus fromDB(ResultRow row) {
+    return Bus(
+        busId: row[0], busNumber: row[1], busSeats: row[2], busType: row[3]);
   }
-
-
 }
-
-
-
-
-
-

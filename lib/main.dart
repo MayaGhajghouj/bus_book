@@ -1,3 +1,4 @@
+import 'package:bus_book/Backend/database.dart';
 import 'package:bus_book/TestDAtabase.dart';
 import 'package:bus_book/moduls/week_table_screen.dart';
 import 'package:bus_book/shared/loginCubit/logincubit.dart';
@@ -26,7 +27,10 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<AppCubit>(
             create: (context) => AppCubit(),
-          )
+          ),
+          BlocProvider<DataBase>(
+            create: (context) => DataBase(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

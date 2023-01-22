@@ -1,18 +1,12 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
-import 'package:bus_book/models/reservation.dart';
-import 'package:bus_book/models/trip.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
-import 'package:bus_book/shared/lists.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
-
-import '../models/bus.dart';
-import '../models/driver.dart';
 
 Widget DefoultFormField({
   required TextEditingController controller,
