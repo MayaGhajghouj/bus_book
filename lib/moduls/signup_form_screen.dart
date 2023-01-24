@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, unused_local_variable, use_key_in_widget_constructors, must_be_immutable, prefer_const_literals_to_create_immutables
 
-import 'package:bus_book/shared/loginCubit/logincubit.dart';
-import 'package:bus_book/shared/loginCubit/logincubitstate.dart';
+import 'package:bus_book/Backend/database.dart';
+import 'package:bus_book/Backend/db_states.dart';
+import 'package:bus_book/shared/Appcubitt/appcubit.dart';
+import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,12 +15,28 @@ class SignUpFormScreen extends StatefulWidget {
 }
 
 class _SignUpFormScreenState extends State<SignUpFormScreen> {
+  @override
+  void initState() {
+    DataBase.get(context).connect();
+    super.initState();
+  }
+
   var formkey = GlobalKey<FormState>();
+  var Namecontroller = TextEditingController();
+  var Emailcontroller = TextEditingController();
+  var passwordcontroller = TextEditingController();
+  var Phonecontroller = TextEditingController();
+  var Addresscontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    LoginCubit MyLogincubit = LoginCubit.get(context);
-    return BlocConsumer<LoginCubit, LoginStates>(
-      listener: (BuildContext context, Object? state) {},
+    AppCubit MyLogincubit = AppCubit.get(context);
+    return BlocConsumer<AppCubit, AppStates>(
+      listener: (BuildContext context, Object? state) {
+        if (state is Connected) {
+          mySnackBar('connected_State', context, Colors.yellow, Colors.black);
+        } else if (state is ErrorConnectingDataState)
+          mySnackBar('Error_Connect', context, Colors.red, Colors.white);
+      },
       builder: (BuildContext context, state) {
         return Form(
           key: formkey,
@@ -26,7 +44,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
             child: Column(
               children: [
                 DefoultFormField(
-                  controller: MyLogincubit.Namecontroller,
+                  controller: Namecontroller,
                   myhinttext: 'الاسم ',
                   suffixicon: Icons.account_circle,
                   typeofkeybord: TextInputType.text,
@@ -37,7 +55,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                  controller: MyLogincubit.Emailcontroller,
+                  controller: Emailcontroller,
                   myhinttext: 'الايميل ',
                   suffixicon: Icons.email,
                   typeofkeybord: TextInputType.emailAddress,
@@ -48,7 +66,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                  controller: MyLogincubit.passwordcontroller,
+                  controller: passwordcontroller,
                   myhinttext: 'كلمة المرور ',
                   suffixicon: Icons.remove_red_eye_outlined,
                   typeofkeybord: TextInputType.text,
@@ -65,7 +83,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                  controller: MyLogincubit.Phonecontroller,
+                  controller: Phonecontroller,
                   myhinttext: 'رقم الهاتف ',
                   suffixicon: Icons.phone,
                   typeofkeybord: TextInputType.phone,
@@ -76,7 +94,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                    controller: MyLogincubit.Addresscontroller,
+                    controller: Addresscontroller,
                     myhinttext: 'ادخل العنوان ',
                     typeofkeybord: TextInputType.text,
                     suffixicon: Icons.location_city,
@@ -86,7 +104,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                     },
                     ontap: () {
                       MyDropdown(
-                        controller: MyLogincubit.Addresscontroller,
+                        controller: Addresscontroller,
                         mylist: MyLogincubit.mymenue,
                         context: this.context,
                         title: "العنوان ",

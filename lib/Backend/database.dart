@@ -44,21 +44,27 @@ class DataBase extends Cubit<DatabaseStates> {
 
   //===========================================================
 
-  Future<void> insertDriver(Driver d) async {
+  Future<void> insertUser(User u) async {
     emit(LoadingState());
 
     await _myDB!.query(
-        'insert into driver (driver_name,driver_phone) values ( ?, ?);',
-        [d.driverName, d.driverPhone]).then((value) {
-      d.driverId = value.insertId!;
-      MyData.driversList[d.driverId!] = d;
-      emit(InsertedData("تم اضافة بيانات السائق الجديد"));
+        'insert into user (user_name,user_phone,user_address,user_email,user_password) values ( ?, ?,?,?,?);',
+        [
+          u.userName,
+          u.userPhone,
+          u.userAddress,
+          u.userEmail,
+          u.userPassword
+        ]).then((value) {
+      u.userId = value.insertId!;
+      MyData.userList[u.userId] = u;
+      emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
-      if (MyData.driversList.containsKey(d.driverId)) {
-        MyData.driversList.remove(d.driverId);
+      if (MyData.userList.containsKey(u.userId)) {
+        MyData.userList.remove(u.userId);
       }
-      emit(ErrorInsertingDataState('[insertDriver] $error'));
-      print("Owis insertDriver :($error) \n $stackTrace");
+      emit(ErrorInsertingDataState('[insert_User] $error'));
+      print("maya insert_User :($error) \n $stackTrace");
     });
   }
 

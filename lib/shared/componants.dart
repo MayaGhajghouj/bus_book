@@ -223,6 +223,8 @@ void myShowDialog(context) {
 //******************BuildItemofWeekTable***********************************
 
 Widget BuildItemofWeekTable({
+  required TextEditingController GOcontroller,
+  required TextEditingController Backcontroller,
   context,
   String? day,
 }) {
@@ -277,41 +279,131 @@ Widget BuildItemofWeekTable({
         Row(
           children: [
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(5.0),
-                margin: EdgeInsets.all(5.0),
-                child: TextDropdownFormField(
-                  controller: AppCubit.get(context).TripBackTimeController,
-                  options: ["10.0", "12.0", "14.0", "16.0"],
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(
-                        Icons.arrow_drop_down,
-                      ),
-                      labelText: "أوقات العودة"),
-                  dropdownHeight: 100,
-                ),
-              ),
+              child: DefoultFormField(
+                  controller: Backcontroller,
+                  myhinttext: '',
+                  typeofkeybord: TextInputType.text,
+                  suffixicon: Icons.share_arrival_time,
+                  validate: (String? m) {
+                    if (m!.isEmpty) return "يجب اختيار وقت العودة ";
+                    return null;
+                  },
+                  ontap: () {
+                    MyDropdown(
+                      controller: Backcontroller,
+                      mylist: AppCubit.get(context).BackTimesMenue,
+                      context: context,
+                      title: "وقت العودة",
+                    );
+                  }),
             ),
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(5.0),
-                margin: EdgeInsets.all(5.0),
-                child: TextDropdownFormField(
-                  controller: AppCubit.get(context).TripGoTimeController,
-                  options: ["8.0", "10.0", "12.0", "14.0"],
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      suffixIcon: Icon(Icons.arrow_drop_down),
-                      labelText: "أوقات الذهاب"),
-                  dropdownHeight: 100,
-                ),
-              ),
+              child: DefoultFormField(
+                  controller: GOcontroller,
+                  myhinttext: '',
+                  typeofkeybord: TextInputType.text,
+                  suffixicon: Icons.share_arrival_time,
+                  validate: (String? m) {
+                    if (m!.isEmpty) return "يجب اختيار وقت الذهاب ";
+                    return null;
+                  },
+                  ontap: () {
+                    MyDropdown(
+                      controller: GOcontroller,
+                      mylist: AppCubit.get(context).GoTimesMenue,
+                      context: context,
+                      title: "وقت الذهاب",
+                    );
+                  }),
             ),
           ],
         ),
       ],
     ),
+  );
+}
+
+//===========================AdditionalTrip============================================
+void AdditonalTrip({
+  context,
+  required TextEditingController Type_AdditionalTrip,
+  required TextEditingController Day_AdditionalTrip,
+  required TextEditingController Time_AdditionalTrip,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: mycolor.blue, width: 5),
+            borderRadius: BorderRadius.circular(30)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'اختر موعد رحلتك الإضافية ',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+                color: mycolor.blue,
+              ),
+            ),
+            DefoultFormField(
+                controller: Type_AdditionalTrip,
+                myhinttext: '',
+                typeofkeybord: TextInputType.text,
+                suffixicon: Icons.trip_origin_outlined,
+                validate: (String? m) {
+                  if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
+                  return null;
+                },
+                ontap: () {
+                  MyDropdown(
+                    controller: Type_AdditionalTrip,
+                    mylist: AppCubit.get(context).Type_AdditionalTRipMenue,
+                    context: context,
+                    title: "نوع الرحلة",
+                  );
+                }),
+            DefoultFormField(
+                controller: Day_AdditionalTrip,
+                myhinttext: '',
+                typeofkeybord: TextInputType.text,
+                suffixicon: Icons.view_day,
+                validate: (String? m) {
+                  if (m!.isEmpty) return "يجب اختيار اليوم  ";
+                  return null;
+                },
+                ontap: () {
+                  MyDropdown(
+                    controller: Day_AdditionalTrip,
+                    mylist: AppCubit.get(context).Day_AdditionalTRipMenue,
+                    context: context,
+                    title: "اليوم الذي اريد به الرحلة",
+                  );
+                }),
+            DefoultFormField(
+                controller: Time_AdditionalTrip,
+                myhinttext: '',
+                typeofkeybord: TextInputType.text,
+                suffixicon: Icons.timer,
+                validate: (String? m) {
+                  if (m!.isEmpty) return "يجب اختيار الوقت  ";
+                  return null;
+                },
+                ontap: () {
+                  MyDropdown(
+                    controller: Time_AdditionalTrip,
+                    mylist: AppCubit.get(context).Time_AdditionalTRipMenue,
+                    context: context,
+                    title: "وقت الرحلة",
+                  );
+                }),
+            submitbutton(mytext: 'إرسال', pressthisbutton: () {}),
+          ],
+        ),
+      );
+    },
   );
 }
 
@@ -394,74 +486,6 @@ Widget submitbutton({
   );
 }
 
-//===========================AdditionalTrip============================================
-void AdditonalTrip(context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-            side: BorderSide(color: mycolor.blue, width: 5),
-            borderRadius: BorderRadius.circular(30)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'اختر موعد رحلتك الإضافية ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-                color: mycolor.blue,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10.0),
-              child: TextDropdownFormField(
-                controller: AppCubit.get(context).AdditionaTypelTrip,
-                options: ["ذهاب", "عودة"],
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(
-                      Icons.arrow_drop_down,
-                    ),
-                    labelText: "نوع الرحلة"),
-                dropdownHeight: 100,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10.0),
-              child: TextDropdownFormField(
-                controller: AppCubit.get(context).AdditionalDayTrip,
-                options: ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء"],
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(
-                      Icons.arrow_drop_down,
-                    ),
-                    labelText: "اليوم"),
-                dropdownHeight: 100,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(10.0),
-              child: TextDropdownFormField(
-                controller: AppCubit.get(context).AdditionalTimeTrip,
-                options: ["8:0", "10:0", "12:0", "14:0", "16:0"],
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.arrow_drop_down),
-                    labelText: "أوقات الرحلة"),
-                dropdownHeight: 100,
-              ),
-            ),
-            submitbutton(mytext: 'إرسال', pressthisbutton: () {}),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 //******************************************************************************* */
 void GoforWard(context, Widget myscreen) {
   Navigator.push(
@@ -503,7 +527,7 @@ mySnackBar(
       style: TextStyle(color: textColor),
     ),
     backgroundColor: background,
-    duration: const Duration(milliseconds: 1500),
+    duration: const Duration(seconds: 2),
   ));
 }
 //********************** */

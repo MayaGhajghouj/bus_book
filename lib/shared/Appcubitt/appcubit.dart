@@ -3,6 +3,7 @@
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
+import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +12,122 @@ class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialAppState());
 
   static AppCubit get(context) => BlocProvider.of(context);
+  //===================== LOGin operations  =============================
+  bool ispassword = true;
+  IconData prefix = Icons.visibility_off_outlined;
+  void changepasswordvisibility() {
+    ispassword = !ispassword;
+    prefix =
+        ispassword ? Icons.visibility_off_outlined : Icons.visibility_outlined;
+    emit(ChaangePasswordVisibility());
+  }
+
+  List<SelectedListItem> mymenue = [
+    SelectedListItem(
+      name: "غربي شارع الهبشة",
+    ),
+    SelectedListItem(
+      name: "غربي شارع أبو سيفو",
+    ),
+    SelectedListItem(
+      name: "غربي شارع باسط",
+    ),
+    SelectedListItem(
+      name: "غربي شارع المدارس ",
+    ),
+    SelectedListItem(
+      name: "غربي شارع السكنة ",
+    ),
+    SelectedListItem(
+      name: "غربي شارع المجمع",
+    ),
+    SelectedListItem(
+      name: "شرقي شارع ثمانة اذار ",
+    ),
+    SelectedListItem(
+      name: "شرقي شارع النهر ",
+    ),
+  ];
 
 //************************************************************************
+  List<SelectedListItem> GoTimesMenue = [
+    SelectedListItem(
+      name: "8:0",
+    ),
+    SelectedListItem(
+      name: "10:0",
+    ),
+    SelectedListItem(
+      name: "12:0",
+    ),
+    SelectedListItem(
+      name: "14:0",
+    ),
+  ];
+  List<SelectedListItem> BackTimesMenue = [
+    SelectedListItem(
+      name: "10:0",
+    ),
+    SelectedListItem(
+      name: "12:0",
+    ),
+    SelectedListItem(
+      name: "14:0",
+    ),
+    SelectedListItem(
+      name: "16:0",
+    ),
+  ];
+  List<SelectedListItem> Time_AdditionalTRipMenue = [
+    SelectedListItem(
+      name: "8:0",
+    ),
+    SelectedListItem(
+      name: "10:0",
+    ),
+    SelectedListItem(
+      name: "12:0",
+    ),
+    SelectedListItem(
+      name: "14:0",
+    ),
+    SelectedListItem(
+      name: "16:0",
+    ),
+  ];
 
+  List<SelectedListItem> Type_AdditionalTRipMenue = [
+    SelectedListItem(
+      name: "ذهاب",
+    ),
+    SelectedListItem(
+      name: "إياب",
+    ),
+  ];
+  List<SelectedListItem> Day_AdditionalTRipMenue = [
+    SelectedListItem(
+      name: "السبت",
+    ),
+    SelectedListItem(
+      name: "الأحد",
+    ),
+    SelectedListItem(
+      name: "الإثنين",
+    ),
+    SelectedListItem(
+      name: "الثلاثاء",
+    ),
+    SelectedListItem(
+      name: "الأربعاء",
+    ),
+    SelectedListItem(
+      name: "الخميس",
+    ),
+    SelectedListItem(
+      name: "الجمعة",
+    ),
+  ];
+  //=============================================================================
   List<Widget> MyTabLabels = [
     // ignore: prefer_const_constructors
     Tab(
@@ -36,6 +150,7 @@ class AppCubit extends Cubit<AppStates> {
       DropdownEditingController(); // اختر نوع الرحلة اضافية
   DropdownEditingController<String> AdditionalTimeTrip =
       DropdownEditingController(); // اختر وقت الرحلة اضافية
+
   //************************ CheckValue ************************************
   bool checkvalueSaterday = false;
   bool checkvalueSunday = false;

@@ -1,5 +1,5 @@
-import 'package:bus_book/shared/loginCubit/logincubit.dart';
-import 'package:bus_book/shared/loginCubit/logincubitstate.dart';
+import 'package:bus_book/shared/Appcubitt/appcubit.dart';
+import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/componants.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +13,17 @@ class MyAccountSccreen extends StatefulWidget {
 }
 
 class _MyAccountSccreenState extends State<MyAccountSccreen> {
+  var formkey = GlobalKey<FormState>();
+  var Namecontroller = TextEditingController();
+  var Emailcontroller = TextEditingController();
+  var passwordcontroller = TextEditingController();
+  var Phonecontroller = TextEditingController();
+  var Addresscontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit, LoginStates>(
+    return BlocConsumer<AppCubit, AppStates>(
       builder: (BuildContext context, state) {
-        LoginCubit MyLogincubit = LoginCubit.get(context);
+        AppCubit MyLogincubit = AppCubit.get(context);
         return Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -81,11 +87,11 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                           borderRadius: BorderRadius.circular(15),
                           color: Colors.white),
                       child: Form(
-                        key: MyLogincubit.formkey,
+                        key: formkey,
                         child: Column(
                           children: [
                             DefoultFormField(
-                              controller: MyLogincubit.Namecontroller,
+                              controller: Namecontroller,
                               myhinttext: 'الاسم ',
                               suffixicon: Icons.account_circle,
                               typeofkeybord: TextInputType.text,
@@ -96,7 +102,7 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                               },
                             ),
                             DefoultFormField(
-                              controller: MyLogincubit.Emailcontroller,
+                              controller: Emailcontroller,
                               myhinttext: 'الايميل ',
                               suffixicon: Icons.email,
                               typeofkeybord: TextInputType.emailAddress,
@@ -107,26 +113,25 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                               },
                             ),
                             DefoultFormField(
-                              controller: MyLogincubit.passwordcontroller,
+                              controller: passwordcontroller,
                               myhinttext: 'كلمة المرور ',
                               suffixicon: Icons.remove_red_eye_outlined,
                               typeofkeybord: TextInputType.text,
                               mytextalign: TextAlign.end,
-                              prefix: LoginCubit.get(context).prefix,
-                              ispassword: LoginCubit.get(context).ispassword,
+                              prefix: MyLogincubit.prefix,
+                              ispassword: MyLogincubit.ispassword,
                               prefixpressed: () {
-                                LoginCubit.get(context)
-                                    .changepasswordvisibility();
+                                MyLogincubit.changepasswordvisibility();
                               },
                               validate: (String? m) {
                                 if (m!.isEmpty ||
-                                    (m.length <= 10 && m.length > 15))
+                                    (m.length <= 10 || m.length > 15))
                                   return "يجب ادخال كلمة أكثر من 10  محارف  ";
                                 return null;
                               },
                             ),
                             DefoultFormField(
-                              controller: MyLogincubit.Phonecontroller,
+                              controller: Phonecontroller,
                               myhinttext: 'رقم الهاتف ',
                               suffixicon: Icons.phone,
                               typeofkeybord: TextInputType.phone,
@@ -137,7 +142,7 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                               },
                             ),
                             DefoultFormField(
-                                controller: MyLogincubit.Addresscontroller,
+                                controller: Addresscontroller,
                                 myhinttext: 'ادخل العنوان ',
                                 typeofkeybord: TextInputType.text,
                                 suffixicon: Icons.location_city,
@@ -147,16 +152,15 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                                 },
                                 ontap: () {
                                   MyDropdown(
-                                    controller: MyLogincubit.Addresscontroller,
+                                    controller: Addresscontroller,
                                     mylist: MyLogincubit.mymenue,
                                     context: this.context,
                                     title: "العنوان ",
                                   );
                                 }),
                             owbutton(onpress: () {
-                              if (MyLogincubit.formkey.currentState!
-                                  .validate()) {
-                                print(MyLogincubit.Emailcontroller);
+                              if (formkey.currentState!.validate()) {
+                                print(Emailcontroller);
                               }
                             }),
                           ],

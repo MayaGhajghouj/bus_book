@@ -56,6 +56,10 @@ class _MainPageState extends State<MainPage>
     super.dispose();
   }
 
+  TextEditingController Type_AdditionalTrip = TextEditingController();
+  TextEditingController Day_AdditionalTrip = TextEditingController();
+  TextEditingController Time_AdditionalTrip = TextEditingController();
+
 //****************************************
   Widget build(BuildContext context) {
     AppCubit MyAppcubit = AppCubit.get(context);
@@ -202,11 +206,14 @@ class _MainPageState extends State<MainPage>
                         WeekTable(),
                       );
                     else {
-                      AdditonalTrip(context);
+                      AdditonalTrip(
+                        context: context,
+                        Type_AdditionalTrip: Type_AdditionalTrip,
+                        Day_AdditionalTrip: Day_AdditionalTrip,
+                        Time_AdditionalTrip: Time_AdditionalTrip,
+                      );
                     }
                   },
-                  //   dotIndicatorColor: Colors.black,
-                  //enableFloatingNavBar: true,
                   items: MyAppcubit.NavBarItems,
                 ),
               ),

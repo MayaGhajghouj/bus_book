@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:bus_book/shared/loginCubit/logincubit.dart';
-import 'package:bus_book/shared/loginCubit/logincubitstate.dart';
+import 'package:bus_book/shared/Appcubitt/appcubit.dart';
+import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../shared/componants.dart';
@@ -19,8 +19,8 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
 //**************************************************************
   @override
   Widget build(BuildContext context) {
-    LoginCubit MyLogincubit = LoginCubit.get(context);
-    return BlocConsumer<LoginCubit, LoginStates>(
+    AppCubit MyLogincubit = AppCubit.get(context);
+    return BlocConsumer<AppCubit, AppStates>(
       listener: (BuildContext context, Object? state) {},
       builder: (BuildContext context, state) {
         return Form(
@@ -29,7 +29,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
             child: Column(
               children: [
                 DefoultFormField(
-                  controller: MyLogincubit.Emailcontroller,
+                  controller: Emailcontroller,
                   myhinttext: 'الايميل ',
                   suffixicon: Icons.email,
                   typeofkeybord: TextInputType.emailAddress,
@@ -42,7 +42,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
                   },
                 ),
                 DefoultFormField(
-                  controller: MyLogincubit.passwordcontroller,
+                  controller: passwordcontroller,
                   myhinttext: 'كلمة المرور ',
                   suffixicon: Icons.remove_red_eye_outlined,
                   typeofkeybord: TextInputType.text,
@@ -53,7 +53,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
                     MyLogincubit.changepasswordvisibility();
                   },
                   validate: (String? m) {
-                    if (m!.isEmpty || (m.length < 3 && m.length > 10))
+                    if (m!.isEmpty || (m.length < 3 || m.length > 10))
                       return " يجب ادخال كلمة مرور من حرفين إلى عشر محارف ";
                     return null;
                   },

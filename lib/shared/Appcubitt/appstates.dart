@@ -11,6 +11,11 @@ class InitialAppState extends AppStates {
   String get nameState => "initial state";
 }
 
+class ChaangePasswordVisibility extends AppStates {
+  @override
+  String get nameState => "ChangePassWordVisibility";
+}
+
 class ChangeBottomState extends AppStates {
   @override
   String get nameState => "ChangeBottomState";

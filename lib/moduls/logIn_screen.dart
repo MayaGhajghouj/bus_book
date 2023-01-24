@@ -1,9 +1,9 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_const_constructors
 
-import 'package:bus_book/shared/loginCubit/logincubit.dart';
-import 'package:bus_book/shared/loginCubit/logincubitstate.dart';
 import 'package:bus_book/moduls/signup_form_screen.dart';
 import 'package:bus_book/moduls/login_form_screen.dart';
+import 'package:bus_book/shared/Appcubitt/appcubit.dart';
+import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +48,7 @@ class _LogInScreenState extends State<LogInScreen>
   @override
   Widget build(BuildContext context) {
     //====================================================================================
-    return BlocConsumer<LoginCubit, LoginStates>(
+    return BlocConsumer<AppCubit, AppStates>(
       listener: (BuildContext context, Object? state) {},
       builder: (BuildContext context, state) {
         return DefaultTabController(

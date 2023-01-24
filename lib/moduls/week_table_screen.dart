@@ -12,7 +12,16 @@ class WeekTable extends StatefulWidget {
 
 class _WeekTableState extends State<WeekTable> {
   // const WeekTable({super.key});
-
+  TextEditingController GoTimesat = TextEditingController();
+  TextEditingController Backtimesat = TextEditingController();
+  TextEditingController GoTimeSUN = TextEditingController();
+  TextEditingController BacktimeSUN = TextEditingController();
+  TextEditingController GoTimeMON = TextEditingController();
+  TextEditingController BacktimeMON = TextEditingController();
+  TextEditingController GoTimeTUS = TextEditingController();
+  TextEditingController BacktimeTUS = TextEditingController();
+  TextEditingController GoTimeWED = TextEditingController();
+  TextEditingController BacktimeWED = TextEditingController();
   @override
   Widget build(BuildContext context) {
     AppCubit MyAppcubit = AppCubit.get(context);
@@ -73,14 +82,36 @@ class _WeekTableState extends State<WeekTable> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          BuildItemofWeekTable(context: context, day: 'السبت'),
-                          BuildItemofWeekTable(context: context, day: 'اللأحد'),
                           BuildItemofWeekTable(
-                              context: context, day: 'الاثنين'),
+                            GOcontroller: GoTimesat,
+                            Backcontroller: Backtimesat,
+                            context: context,
+                            day: 'السبت',
+                          ),
                           BuildItemofWeekTable(
-                              context: context, day: 'الثلاثاء'),
+                            context: context,
+                            day: 'اللأحد',
+                            GOcontroller: GoTimeSUN,
+                            Backcontroller: BacktimeSUN,
+                          ),
                           BuildItemofWeekTable(
-                              context: context, day: 'الأربعاء'),
+                            context: context,
+                            day: 'الاثنين',
+                            GOcontroller: GoTimeMON,
+                            Backcontroller: BacktimeMON,
+                          ),
+                          BuildItemofWeekTable(
+                            context: context,
+                            day: 'الثلاثاء',
+                            GOcontroller: GoTimeTUS,
+                            Backcontroller: BacktimeTUS,
+                          ),
+                          BuildItemofWeekTable(
+                            context: context,
+                            day: 'الأربعاء',
+                            GOcontroller: GoTimeWED,
+                            Backcontroller: BacktimeWED,
+                          ),
                           DefaultMaterialButton(
                             context: context,
                             text: 'إرسال ',
