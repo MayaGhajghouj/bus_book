@@ -1,11 +1,11 @@
 import 'package:mysql1/mysql1.dart';
 
 class User {
-  int userId;
+  int? userId;
   String userName, userAddress, userPhone, userEmail, userPassword;
 
   User({
-    required this.userId,
+    this.userId,
     required this.userName,
     required this.userPhone,
     required this.userAddress,

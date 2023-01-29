@@ -1,6 +1,5 @@
 import 'package:bus_book/Backend/database.dart';
-import 'package:bus_book/moduls/mainpage.dart';
-import 'package:bus_book/moduls/week_table_screen.dart';
+import 'package:bus_book/moduls/logIn_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: MainPage(),
+          home: LogInScreen(),
         ),
       ),
     );

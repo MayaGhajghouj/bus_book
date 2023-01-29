@@ -4,7 +4,6 @@ import 'package:bus_book/shared/Constants/connectionDB.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
-
 import '../models/bus.dart';
 import '../models/driver.dart';
 import '../models/manager.dart';
@@ -57,7 +56,7 @@ class DataBase extends Cubit<DatabaseStates> {
           u.userPassword
         ]).then((value) {
       u.userId = value.insertId!;
-      MyData.userList[u.userId] = u;
+      MyData.userList[u.userId!] = u;
       emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
       if (MyData.userList.containsKey(u.userId)) {
@@ -68,7 +67,25 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
-//===========================================================
+  late bool temp;
+//==================== User login  =======================================
+  Future<void> UserLogin(String email, String password) async {
+    temp = false;
+    emit(LoadingState());
+//select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
+    await _myDB!.query(
+        'select * from user where (user_email,user_password)=(?,?)',
+        [email, password]).then((value) {
+      if (value.isNotEmpty) {
+        emit(SelectedData("Success login "));
+        temp = true;
+        print('****** Success login *************** ');
+      }
+    }).catchError((error, stackTrace) {
+      emit(ErrorSelectingDataState('False login $error'));
+      print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
+    });
+  } //========================================================================
 
   Future<void> getDrivers() async {
     emit(LoadingState());

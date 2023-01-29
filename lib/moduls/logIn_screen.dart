@@ -17,13 +17,11 @@ class LogInScreen extends StatefulWidget {
 
 class _LogInScreenState extends State<LogInScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _controller;
-
   @override
   void initState() {
-    _controller = TabController(length: 2, vsync: this);
+    AppCubit.get(context).controller = TabController(length: 2, vsync: this);
 
-    _controller.addListener(() {
+    AppCubit.get(context).controller.addListener(() {
       setState(() {});
     });
 
@@ -51,6 +49,7 @@ class _LogInScreenState extends State<LogInScreen>
     return BlocConsumer<AppCubit, AppStates>(
       listener: (BuildContext context, Object? state) {},
       builder: (BuildContext context, state) {
+        AppCubit myCubit = AppCubit.get(context);
         return DefaultTabController(
           length: 2,
           child: Scaffold(
@@ -68,7 +67,7 @@ class _LogInScreenState extends State<LogInScreen>
                         child: Padding(
                           padding: const EdgeInsets.all(40.0),
                           child: Text(
-                            _controller.index == 0
+                            myCubit.controller.index == 0
                                 ? 'مرحبا بك '
                                 : 'اهلا بعودتك من جديد ',
                             textAlign: TextAlign.center,
@@ -93,7 +92,7 @@ class _LogInScreenState extends State<LogInScreen>
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Container(
-                      height: _controller.index == 1
+                      height: myCubit.controller.index == 1
                           ? HieghtOfScreen(context) * 0.5
                           : HieghtOfScreen(context) * 0.70,
                       decoration: BoxDecoration(
@@ -115,7 +114,7 @@ class _LogInScreenState extends State<LogInScreen>
                             // this container  for tabBar labels
                             height: 70.0,
                             child: TabBar(
-                              controller: _controller,
+                              controller: myCubit.controller,
                               labelColor: mycolor.blue,
                               unselectedLabelColor: Color(0xff61000000),
                               labelPadding: EdgeInsets.all(5.0),
@@ -133,7 +132,7 @@ class _LogInScreenState extends State<LogInScreen>
                           Expanded(
                             // ignore: prefer_const_literals_to_create_immutables
                             child: TabBarView(
-                                controller: _controller,
+                                controller: myCubit.controller,
                                 children: [signupObject, loginObject]),
                           ),
                         ],

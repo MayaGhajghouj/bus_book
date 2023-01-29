@@ -4,7 +4,6 @@ import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
-import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +11,10 @@ class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialAppState());
 
   static AppCubit get(context) => BlocProvider.of(context);
+
+  //==============  tab bar ============================================
+  late TabController controller;
+
   //===================== LOGin operations  =============================
   bool ispassword = true;
   IconData prefix = Icons.visibility_off_outlined;
@@ -137,19 +140,6 @@ class AppCubit extends Cubit<AppStates> {
       text: 'الرحلات اللاحقة  ',
     ),
   ];
-
-////*********************************************************
-  DropdownEditingController<String> TripGoTimeController =
-      DropdownEditingController(); // موعد ذهاب الرحلة
-  DropdownEditingController<String> TripBackTimeController =
-      DropdownEditingController(); // موعد عودة الرحلة
-
-  DropdownEditingController<String> AdditionalDayTrip =
-      DropdownEditingController(); // اختر اليوم في اشتراك رحلة اضافية
-  DropdownEditingController<String> AdditionaTypelTrip =
-      DropdownEditingController(); // اختر نوع الرحلة اضافية
-  DropdownEditingController<String> AdditionalTimeTrip =
-      DropdownEditingController(); // اختر وقت الرحلة اضافية
 
   //************************ CheckValue ************************************
   bool checkvalueSaterday = false;
