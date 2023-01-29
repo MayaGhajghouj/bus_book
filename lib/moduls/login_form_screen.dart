@@ -78,17 +78,11 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
                       context: context,
                       onpressed: () {
                         if (formkey.currentState!.validate()) {
-                          myDB.UserLogin(
-                                  Emailcontroller.text, passwordcontroller.text)
+                          myDB.UserLogin(Emailcontroller.text,
+                                  passwordcontroller.text, this.context)
                               .then((value) {
-                            if (myDB.temp) {
-                              GoforWard(context, MainPage());
-                              Emailcontroller.clear();
-                              passwordcontroller.clear();
-                            } else {
-                              mySnackBar('ليس لديك حساب', context, Colors.green,
-                                  Colors.black);
-                            }
+                            Emailcontroller.clear();
+                            passwordcontroller.clear();
                           });
                         }
                       },

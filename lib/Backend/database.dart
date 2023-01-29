@@ -1,7 +1,11 @@
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
+import 'package:bus_book/moduls/mainpage.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
+import 'package:bus_book/shared/Constants/mycolors.dart';
+import 'package:bus_book/shared/componants.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
 import '../models/bus.dart';
@@ -68,8 +72,25 @@ class DataBase extends Cubit<DatabaseStates> {
   }
 
   late bool temp;
+// //==================== User login  =======================================
+//   Future<void> UserLogin(String email, String password) async {
+//     temp = false;
+//     emit(LoadingState());
+// //select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
+//     await _myDB!.query(
+//         'select * from user where (user_email,user_password)=(?,?)',
+//         [email, password]).then((value) {
+//       if (value.isNotEmpty) {
+//         emit(SelectedData("Success login "));
+//         temp = true;
+//         print('****** Success login *************** ');
+//       }
+//     }).catchError((error, stackTrace) {
+//       emit(ErrorSelectingDataState('False login $error'));
+//       print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
+//     });
 //==================== User login  =======================================
-  Future<void> UserLogin(String email, String password) async {
+  Future<void> UserLogin(String email, String password, context) async {
     temp = false;
     emit(LoadingState());
 //select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
@@ -78,8 +99,12 @@ class DataBase extends Cubit<DatabaseStates> {
         [email, password]).then((value) {
       if (value.isNotEmpty) {
         emit(SelectedData("Success login "));
-        temp = true;
+        GoforWard(context, MainPage());
+        mySnackBar('أهلا بك في تطبيق مايا و أويس للنقل ', context, Colors.white,
+            Colors.black);
         print('****** Success login *************** ');
+      } else {
+        mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
       }
     }).catchError((error, stackTrace) {
       emit(ErrorSelectingDataState('False login $error'));
