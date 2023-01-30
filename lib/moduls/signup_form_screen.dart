@@ -136,6 +136,8 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                             Emailcontroller.clear();
                             passwordcontroller.clear();
                             mycubit.controller.index = 1;
+                            mySnackBar('تم إنشاء حساب', context, Colors.blue,
+                                Colors.white);
                           });
                         }
                       },

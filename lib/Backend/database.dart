@@ -100,8 +100,8 @@ class DataBase extends Cubit<DatabaseStates> {
       if (value.isNotEmpty) {
         emit(SelectedData("Success login "));
         GoforWard(context, MainPage());
-        mySnackBar('أهلا بك في تطبيق مايا و أويس للنقل ', context, Colors.white,
-            Colors.black);
+        mySnackBar('أهلا بك في تطبيق مايا و أويس للنقل ', context, Colors.blue,
+            Colors.white);
         print('****** Success login *************** ');
       } else {
         mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
