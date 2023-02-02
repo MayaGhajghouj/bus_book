@@ -1,6 +1,7 @@
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/moduls/mainpage.dart';
+import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:bus_book/shared/componants.dart';
@@ -20,7 +21,7 @@ class DataBase extends Cubit<DatabaseStates> {
 
   MySqlConnection? _myDB;
 
-  //===========================================================
+  //====================== connect =====================================
 
   Future<void> connect() async {
     emit(LoadingState());
@@ -33,7 +34,7 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
-  //===========================================================
+  //====================== disconnect =====================================
 
   Future<void> disConnect() async {
     emit(LoadingState());
@@ -45,11 +46,10 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
-  //===========================================================
+  //===================== sign up insert user to database ======================================
 
-  Future<void> insertUser(User u) async {
+  Future<void> insertUser(User u, context) async {
     emit(LoadingState());
-
     await _myDB!.query(
         'insert into user (user_name,user_phone,user_address,user_email,user_password) values ( ?, ?,?,?,?);',
         [
@@ -59,39 +59,29 @@ class DataBase extends Cubit<DatabaseStates> {
           u.userEmail,
           u.userPassword
         ]).then((value) {
-      u.userId = value.insertId!;
-      MyData.userList[u.userId!] = u;
       emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
+      mySnackBar('تم إنشاء حسابك و يرجى تسجيل الدخول', context, Colors.blue,
+          Colors.white);
+      AppCubit.get(context).controller.index = 1;
     }).catchError((error, stackTrace) {
-      if (MyData.userList.containsKey(u.userId)) {
-        MyData.userList.remove(u.userId);
+      emit(ErrorInsertingDataState('[insert_User_error] $error'));
+      if (error.toString().contains('Duplicate')) {
+        mySnackBar('يرجى  كتابة إيميل جديد لأن هذا الايميل مستخدم  ', context,
+            Colors.red, Colors.white);
+      } else {
+        myError(
+          msg: error.toString(),
+          onPressed: () {},
+        );
       }
-      emit(ErrorInsertingDataState('[insert_User] $error'));
-      print("maya insert_User :($error) \n $stackTrace");
+
+      print(
+          "=========================inside USER SIGN UP ERROR FUNCTION ====>>($error) \n $stackTrace");
     });
   }
+  //================= user login ==========================================
 
-  late bool temp;
-// //==================== User login  =======================================
-//   Future<void> UserLogin(String email, String password) async {
-//     temp = false;
-//     emit(LoadingState());
-// //select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
-//     await _myDB!.query(
-//         'select * from user where (user_email,user_password)=(?,?)',
-//         [email, password]).then((value) {
-//       if (value.isNotEmpty) {
-//         emit(SelectedData("Success login "));
-//         temp = true;
-//         print('****** Success login *************** ');
-//       }
-//     }).catchError((error, stackTrace) {
-//       emit(ErrorSelectingDataState('False login $error'));
-//       print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
-//     });
-//==================== User login  =======================================
   Future<void> UserLogin(String email, String password, context) async {
-    temp = false;
     emit(LoadingState());
 //select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
     await _myDB!.query(
@@ -99,18 +89,43 @@ class DataBase extends Cubit<DatabaseStates> {
         [email, password]).then((value) {
       if (value.isNotEmpty) {
         emit(SelectedData("Success login "));
+        Navigator.pop(context);
         GoforWard(context, MainPage());
         mySnackBar('أهلا بك في تطبيق مايا و أويس للنقل ', context, Colors.blue,
             Colors.white);
         print('****** Success login *************** ');
       } else {
-        mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
+        //mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
       }
     }).catchError((error, stackTrace) {
       emit(ErrorSelectingDataState('False login $error'));
       print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
     });
-  } //========================================================================
+  }
+
+//==================================================================================
+  Future<void> getUserTrips(User u) async {
+    emit(LoadingState());
+    await _myDB!.query('''
+       select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
+      d.driver_name,d.driver_phone,
+      b.bus_number,b.bus_type,
+      r.reservation_arrive_time,
+      u.user_name
+      from bus_app_db.trip t,bus_app_db.driver d , bus_app_db.bus b, bus_app_db.reservation r ,bus_app_db.user u
+      where t.trip_driver_id=d.driver_id and t.trip_bus_id=b.bus_id and r.resrervation_user_id=u.user_id and r.reservatin_trip_id=t.trip_id
+      ''').then((value) {
+      for (var row in value) {
+        Trip t = Trip.fromDB(row);
+        MyData.tripList[t.tripId!] = t;
+      }
+      emit(SelectedData("تم جلب رحلات المستخدم:${u.userName}"));
+    }).catchError((error, stackTrace) {
+      emit(ErrorSelectingDataState('[getUserTrips] $error'));
+      print("Owis getUserTrips :($error) \n $stackTrace");
+    });
+  }
+//========================================================================
 
   Future<void> getDrivers() async {
     emit(LoadingState());
@@ -144,31 +159,6 @@ class DataBase extends Cubit<DatabaseStates> {
   }
 
   //===========================================================
-
-  Future<void> getUserTrips(User u) async {
-    emit(LoadingState());
-    await _myDB!.query('''
-      select trip_id,trip_name,trip_type,trip_date,trip_price,
-      concat( bus_type ,concat(' - ', bus_number)),
-      driver_name from trip,bus,driver where
-      driver_id=trip_driver_id 
-      and bus_id=trip_bus_id and trip_id in (
-      select reservatin_trip_id from reservation
-      where resrervation_user_id = ? );
-      ''', [u.userId]).then((value) {
-      MyData.tripList.clear();
-
-      for (var row in value) {
-        Trip t = Trip.fromDB(row);
-        MyData.tripList[t.tripId!] = t;
-      }
-      emit(SelectedData("تم جلب الرحلات التي قام بها المستخدم:${u.userName}"));
-    }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getUserTrips] $error'));
-      print("Owis getUserTrips :($error) \n $stackTrace");
-    });
-  }
-
   //===========================================================
   Future<void> getManager() async {
     emit(LoadingState());

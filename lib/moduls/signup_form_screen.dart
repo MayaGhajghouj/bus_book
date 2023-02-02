@@ -30,22 +30,15 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
   var Addresscontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    AppCubit MyLogincubit = AppCubit.get(context);
     DataBase mydb = DataBase.get(context);
+    AppCubit mycubit = AppCubit.get(context);
 
     return BlocConsumer<DataBase, DatabaseStates>(
-      listener: (context, state) {
-        if (state is Connected) {
-          mySnackBar('connected_State', context, Colors.yellow, Colors.black);
-          print('CONEECTED ***************************');
-        } else if (state is ErrorConnectingDataState)
-          mySnackBar('Error_Connect', context, Colors.red, Colors.white);
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return BlocConsumer<AppCubit, AppStates>(
           listener: (BuildContext context, Object? state) {},
           builder: (BuildContext context, state) {
-            AppCubit mycubit = AppCubit.get(context);
             return Form(
               key: formkey,
               child: SingleChildScrollView(
@@ -79,14 +72,14 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                       suffixicon: Icons.remove_red_eye_outlined,
                       typeofkeybord: TextInputType.text,
                       mytextalign: TextAlign.end,
-                      prefix: MyLogincubit.prefix,
-                      ispassword: MyLogincubit.ispassword,
+                      prefix: mycubit.prefix,
+                      ispassword: mycubit.ispassword,
                       prefixpressed: () {
-                        MyLogincubit.changepasswordvisibility();
+                        mycubit.changepasswordvisibility();
                       },
                       validate: (String? m) {
                         if (m!.isEmpty || (m.length < 3 || m.length > 10))
-                          return " يجب ادخال كلمة مرور من حرفين إلى عشر محارف ";
+                          return " يجب ادخال كلمة مرور من ثلاث إلى عشر محارف ";
                         return null;
                       },
                     ),
@@ -114,7 +107,7 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                         ontap: () {
                           MyDropdown(
                             controller: Addresscontroller,
-                            mylist: MyLogincubit.mymenue,
+                            mylist: mycubit.mymenue,
                             context: this.context,
                             title: "العنوان ",
                           );
@@ -129,15 +122,12 @@ class _SignUpFormScreenState extends State<SignUpFormScreen> {
                               userAddress: Addresscontroller.text,
                               userEmail: Emailcontroller.text,
                               userPassword: passwordcontroller.text);
-                          mydb.insertUser(myuser).then((value) {
+                          mydb.insertUser(myuser, this.context).then((value) {
                             Namecontroller.clear();
                             Phonecontroller.clear();
                             Addresscontroller.clear();
                             Emailcontroller.clear();
                             passwordcontroller.clear();
-                            mycubit.controller.index = 1;
-                            mySnackBar('تم إنشاء حساب', context, Colors.blue,
-                                Colors.white);
                           });
                         }
                       },

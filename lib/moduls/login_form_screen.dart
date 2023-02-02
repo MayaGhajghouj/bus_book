@@ -7,7 +7,6 @@ import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../shared/componants.dart';
-import 'mainpage.dart';
 
 class LogInFormScreen extends StatefulWidget {
   @override
@@ -25,16 +24,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
     AppCubit MyLogincubit = AppCubit.get(context);
     DataBase myDB = DataBase.get(context);
     return BlocConsumer<DataBase, DatabaseStates>(
-      listener: (context, state) {
-        if (state is SelectedData) {
-          mySnackBar(
-              'WELCOMe in your account ', context, Colors.yellow, Colors.black);
-        }
-        if (state is ErrorSelectingDataState) {
-          mySnackBar('error in your informations ', context, Colors.pink,
-              Colors.black);
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return BlocConsumer<AppCubit, AppStates>(
           listener: (BuildContext context, Object? state) {},
@@ -70,7 +60,7 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
                       },
                       validate: (String? m) {
                         if (m!.isEmpty || (m.length < 3 || m.length > 10))
-                          return " يجب ادخال كلمة مرور من حرفين إلى عشر محارف ";
+                          return " يجب ادخال كلمة مرور من ثلاث إلى عشر محارف ";
                         return null;
                       },
                     ),
