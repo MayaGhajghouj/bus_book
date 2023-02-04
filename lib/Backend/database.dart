@@ -29,7 +29,7 @@ class DataBase extends Cubit<DatabaseStates> {
       _myDB = value;
       emit(Connected());
     }).catchError((error, stackTrace) {
-      emit(ErrorConnectingDataState('[connect] $error'));
+      emit(ErrorConnectingDataState('[Error_connect_] $error'));
       print("Owis connect :($error) \n $stackTrace");
     });
   }
@@ -59,10 +59,10 @@ class DataBase extends Cubit<DatabaseStates> {
           u.userEmail,
           u.userPassword
         ]).then((value) {
-      emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
+      AppCubit.get(context).controller.index = 1;
       mySnackBar('تم إنشاء حسابك و يرجى تسجيل الدخول', context, Colors.blue,
           Colors.white);
-      AppCubit.get(context).controller.index = 1;
+      emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
       emit(ErrorInsertingDataState('[insert_User_error] $error'));
       if (error.toString().contains('Duplicate')) {
@@ -95,7 +95,7 @@ class DataBase extends Cubit<DatabaseStates> {
             Colors.white);
         print('****** Success login *************** ');
       } else {
-        //mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
+        mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
       }
     }).catchError((error, stackTrace) {
       emit(ErrorSelectingDataState('False login $error'));

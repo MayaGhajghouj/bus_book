@@ -18,7 +18,6 @@ class SignUpFormScreen extends StatefulWidget {
 class _SignUpFormScreenState extends State<SignUpFormScreen> {
   @override
   void initState() {
-    DataBase.get(context).connect();
     super.initState();
   }
 
