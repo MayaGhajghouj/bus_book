@@ -23,66 +23,61 @@ class _LogInFormScreenState extends State<LogInFormScreen> {
   Widget build(BuildContext context) {
     AppCubit MyLogincubit = AppCubit.get(context);
     DataBase myDB = DataBase.get(context);
-    return BlocConsumer<DataBase, DatabaseStates>(
+    return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        return BlocConsumer<AppCubit, AppStates>(
-          listener: (BuildContext context, Object? state) {},
-          builder: (BuildContext context, state) {
-            return Form(
-              key: formkey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    DefoultFormField(
-                      controller: Emailcontroller,
-                      myhinttext: 'الايميل ',
-                      suffixicon: Icons.email,
-                      typeofkeybord: TextInputType.emailAddress,
-                      mytextalign: TextAlign.end,
-                      validate: (String value) {
-                        if (value.isEmpty) {
-                          return "يجب ادخال الايميل ";
-                        }
-                        return null;
-                      },
-                    ),
-                    DefoultFormField(
-                      controller: passwordcontroller,
-                      myhinttext: 'كلمة المرور ',
-                      suffixicon: Icons.remove_red_eye_outlined,
-                      typeofkeybord: TextInputType.text,
-                      mytextalign: TextAlign.end,
-                      prefix: MyLogincubit.prefix,
-                      ispassword: MyLogincubit.ispassword,
-                      prefixpressed: () {
-                        MyLogincubit.changepasswordvisibility();
-                      },
-                      validate: (String? m) {
-                        if (m!.isEmpty || (m.length < 3 || m.length > 10))
-                          return " يجب ادخال كلمة مرور من ثلاث إلى عشر محارف ";
-                        return null;
-                      },
-                    ),
-                    DefaultMaterialButton(
-                      context: context,
-                      onpressed: () {
-                        if (formkey.currentState!.validate()) {
-                          myDB.UserLogin(Emailcontroller.text,
-                                  passwordcontroller.text, this.context)
-                              .then((value) {
-                            Emailcontroller.clear();
-                            passwordcontroller.clear();
-                          });
-                        }
-                      },
-                      text: "حفظ",
-                    ),
-                  ],
+        return Form(
+          key: formkey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DefoultFormField(
+                  controller: Emailcontroller,
+                  myhinttext: 'الايميل ',
+                  suffixicon: Icons.email,
+                  typeofkeybord: TextInputType.emailAddress,
+                  mytextalign: TextAlign.end,
+                  validate: (String value) {
+                    if (value.isEmpty) {
+                      return "يجب ادخال الايميل ";
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            );
-          },
+                DefoultFormField(
+                  controller: passwordcontroller,
+                  myhinttext: 'كلمة المرور ',
+                  suffixicon: Icons.remove_red_eye_outlined,
+                  typeofkeybord: TextInputType.text,
+                  mytextalign: TextAlign.end,
+                  prefix: MyLogincubit.prefix,
+                  ispassword: MyLogincubit.ispassword,
+                  prefixpressed: () {
+                    MyLogincubit.changepasswordvisibility();
+                  },
+                  validate: (String? m) {
+                    if (m!.isEmpty || (m.length < 3 || m.length > 10))
+                      return " يجب ادخال كلمة مرور من ثلاث إلى عشر محارف ";
+                    return null;
+                  },
+                ),
+                DefaultMaterialButton(
+                  context: context,
+                  onpressed: () {
+                    if (formkey.currentState!.validate()) {
+                      myDB.UserLogin(Emailcontroller.text,
+                              passwordcontroller.text, this.context)
+                          .then((value) {
+                        Emailcontroller.clear();
+                        passwordcontroller.clear();
+                      });
+                    }
+                  },
+                  text: "حفظ",
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

@@ -1,12 +1,8 @@
 import 'package:bus_book/Backend/database.dart';
 import 'package:bus_book/moduls/logIn_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
-import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'Backend/db_states.dart';
-import 'shared/componants.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,12 +19,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<AppCubit>(
             create: (context) => AppCubit(),
-            child: BlocListener<AppCubit, AppStates>(
-              listener: (context, state) {},
-            ),
           ),
           BlocProvider<DataBase>(
-            create: (context) => DataBase()..connect(),
+            create: (context) => DataBase(),
           ),
         ],
         child: MaterialApp(

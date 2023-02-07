@@ -10,6 +10,7 @@ import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../shared/componants.dart';
+import 'mainpage.dart';
 
 class LogInScreen extends StatefulWidget {
   @override
@@ -25,7 +26,9 @@ class _LogInScreenState extends State<LogInScreen>
     AppCubit.get(context).controller.addListener(() {
       setState(() {});
     });
-
+    DataBase.get(context).connect();
+    print(
+        '=================================== initilization ========================================================');
     super.initState();
   }
 
@@ -60,9 +63,15 @@ class _LogInScreenState extends State<LogInScreen>
                     state is ErrorInsertingDataState ||
                     state is ErrorSelectingDataState) {
                   mySnackBar(state.msg, context, Colors.red, Colors.white);
-                } else if (state is! LoadingState) {
+                } else if (state is SelectedData) {
+                  Navigator.pop(context);
+                  GoforWard(context, MainPage());
                   mySnackBar(state.msg, context, Colors.blue, Colors.white);
-                }
+                } else if (state is InsertedData) {
+                  AppCubit.get(context).controller.index = 1;
+                  mySnackBar(state.msg, context, Colors.blue, Colors.white);
+                } else if (state is Connected)
+                  mySnackBar(state.msg, context, Colors.blue, Colors.white);
               },
               builder: (context, state) {
                 if (state is LoadingState) {
@@ -74,7 +83,6 @@ class _LogInScreenState extends State<LogInScreen>
                         DataBase.get(context).connect();
                       });
                 }
-
                 return Stack(
                   children: [
                     Column(

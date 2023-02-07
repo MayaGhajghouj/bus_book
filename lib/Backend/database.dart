@@ -30,7 +30,7 @@ class DataBase extends Cubit<DatabaseStates> {
       emit(Connected());
     }).catchError((error, stackTrace) {
       emit(ErrorConnectingDataState('[Error_connect_] $error'));
-      print("Owis connect :($error) \n $stackTrace");
+      print("maya connect :($error) \n $stackTrace");
     });
   }
 
@@ -42,7 +42,7 @@ class DataBase extends Cubit<DatabaseStates> {
       emit(DisConnected());
     }).catchError((error, stackTrace) {
       emit(ErrorDisConnectingDataState('[disConnect] $error'));
-      print("Owis disConnect :($error) \n $stackTrace");
+      print("maya disConnect :($error) \n $stackTrace");
     });
   }
 
@@ -59,24 +59,12 @@ class DataBase extends Cubit<DatabaseStates> {
           u.userEmail,
           u.userPassword
         ]).then((value) {
-      AppCubit.get(context).controller.index = 1;
-      mySnackBar('تم إنشاء حسابك و يرجى تسجيل الدخول', context, Colors.blue,
-          Colors.white);
-      emit(InsertedData("تم اضافة بيانات المستخدم الجديد"));
+      emit(
+          InsertedData(" يرجى تسجيل الدخول ، تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
-      emit(ErrorInsertingDataState('[insert_User_error] $error'));
-      if (error.toString().contains('Duplicate')) {
-        mySnackBar('يرجى  كتابة إيميل جديد لأن هذا الايميل مستخدم  ', context,
-            Colors.red, Colors.white);
-      } else {
-        myError(
-          msg: error.toString(),
-          onPressed: () {},
-        );
-      }
-
       print(
           "=========================inside USER SIGN UP ERROR FUNCTION ====>>($error) \n $stackTrace");
+      emit(ErrorInsertingDataState('[insert_User_error] $error'));
     });
   }
   //================= user login ==========================================
@@ -88,17 +76,14 @@ class DataBase extends Cubit<DatabaseStates> {
         'select * from user where (user_email,user_password)=(?,?)',
         [email, password]).then((value) {
       if (value.isNotEmpty) {
-        emit(SelectedData("Success login "));
-        Navigator.pop(context);
-        GoforWard(context, MainPage());
-        mySnackBar('أهلا بك في تطبيق مايا و أويس للنقل ', context, Colors.blue,
-            Colors.white);
-        print('****** Success login *************** ');
+        print('****** تم نجاح عملية تسجيل الدخوول *************** ');
+        emit(SelectedData("تم تسجيل الدخول بنجاح "));
       } else {
-        mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
+        throw Exception(' الايميل او كلمة المرور غلط او ليس لديك حساب بعد');
+        // mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
       }
     }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('False login $error'));
+      emit(ErrorSelectingDataState('False login here $error'));
       print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
     });
   }
