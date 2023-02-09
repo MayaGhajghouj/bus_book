@@ -198,14 +198,8 @@ class _MainPageState extends State<MainPage>
                         ),
                         Expanded(
                           child: TabBarView(controller: _controller, children: [
-                            Container(
-                              color: mycolor.blue,
-                            ),
-                            Container(
-                              color: mycolor.yello,
-                            ),
-                            // MyListOfTrips(context),
-                            // MyListOfTrips(context),
+                            MyListOfTrips(this.context),
+                            MyListOfTrips(this.context),
                           ]),
                         ),
                       ],

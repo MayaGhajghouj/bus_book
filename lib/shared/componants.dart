@@ -543,11 +543,11 @@ Widget MyListOfTrips(context) {
 // code meshooooooooooooooooooooooooo
   return ListView.separated(
     itemBuilder: (context, index) {
-      MyTrip myTrip = MyData.tripList[index];
+      MyTrip? myTrip = MyData.tripList[index];
 
       return mycard(
         context: context,
-        myTrip: myTrip,
+        myTrip: myTrip!,
       );
     },
     separatorBuilder: (context, index) {
