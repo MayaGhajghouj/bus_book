@@ -1,5 +1,6 @@
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
+import 'package:bus_book/models/myTrip.dart';
 import 'package:bus_book/moduls/mainpage.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
@@ -76,7 +77,10 @@ class DataBase extends Cubit<DatabaseStates> {
         'select * from user where (user_email,user_password)=(?,?)',
         [email, password]).then((value) {
       if (value.isNotEmpty) {
+        print('===================================================');
         print('****** تم نجاح عملية تسجيل الدخوول *************** ');
+
+        print('===================================================');
         emit(SelectedData("تم تسجيل الدخول بنجاح "));
       } else {
         throw Exception(' الايميل او كلمة المرور غلط او ليس لديك حساب بعد');
@@ -88,8 +92,9 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
+  int IndexOfMap = 0;
 //==================================================================================
-  Future<void> getUserTrips(User u) async {
+  Future<void> getUserTrips() async {
     emit(LoadingState());
     await _myDB!.query('''
        select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
@@ -100,14 +105,16 @@ class DataBase extends Cubit<DatabaseStates> {
       from bus_app_db.trip t,bus_app_db.driver d , bus_app_db.bus b, bus_app_db.reservation r ,bus_app_db.user u
       where t.trip_driver_id=d.driver_id and t.trip_bus_id=b.bus_id and r.resrervation_user_id=u.user_id and r.reservatin_trip_id=t.trip_id
       ''').then((value) {
+      // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
       for (var row in value) {
-        Trip t = Trip.fromDB(row);
-        MyData.tripList[t.tripId!] = t;
+        MyTrip t = MyTrip.fromDB(row);
+        MyData.tripList[IndexOfMap] = t;
+        IndexOfMap++;
       }
-      emit(SelectedData("تم جلب رحلات المستخدم:${u.userName}"));
+      emit(SelectedData("تم جلب رحلات المستخدم:"));
     }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getUserTrips] $error'));
-      print("Owis getUserTrips :($error) \n $stackTrace");
+      emit(ErrorSelectingDataState('[get_User_Trips_error ] $error'));
+      print("maya getUserTrips function error :($error) \n $stackTrace");
     });
   }
 //========================================================================

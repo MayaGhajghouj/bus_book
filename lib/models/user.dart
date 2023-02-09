@@ -2,15 +2,15 @@ import 'package:mysql1/mysql1.dart';
 
 class User {
   int? userId;
-  String userName, userAddress, userPhone, userEmail, userPassword;
+  String? userName, userAddress, userPhone, userEmail, userPassword;
 
   User({
     this.userId,
     required this.userName,
-    required this.userPhone,
-    required this.userAddress,
-    required this.userEmail,
-    required this.userPassword,
+    this.userPhone,
+    this.userAddress,
+    this.userEmail,
+    this.userPassword,
   });
 
   static User fromDB(ResultRow row) {

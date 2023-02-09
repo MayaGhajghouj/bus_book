@@ -1,3 +1,5 @@
+import 'package:bus_book/Backend/database.dart';
+import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/moduls/my_account_screen.dart';
 import 'package:bus_book/moduls/week_table_screen.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
@@ -81,118 +83,134 @@ class _MainPageState extends State<MainPage>
               child: Scaffold(
                 extendBody: false,
                 backgroundColor: Colors.transparent,
-                body: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color.fromRGBO(0, 0, 0, 0.541),
-                              blurRadius: 15,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.white),
-                      margin: EdgeInsets.all(15),
-                      height: 0.07 * MediaQuery.of(context).size.height,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.account_circle,
-                              size: 30.0,
-                              color: mycolor.blue,
-                            ),
-                            onPressed: () {
-                              GoforWard(context, MyAccountSccreen());
-                            },
-                          ),
-                          //**************************** */
-                          Expanded(
-                            //tabbarLabels
-                            child: TabBar(
-                              controller: _controller,
-                              labelColor: mycolor.blue,
-                              unselectedLabelColor: Color(0xff61000000),
-                              labelPadding: EdgeInsets.all(5.0),
-                              indicatorColor: mycolor.blue,
-                              indicatorSize: TabBarIndicatorSize.label,
-                              indicatorWeight: 5.0,
-                              labelStyle: TextStyle(
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18.0,
+                body: BlocConsumer<DataBase, DatabaseStates>(
+                  listener: (context, state) {
+                    if (state is ErrorSelectingDataState)
+                      mySnackBar(
+                          state.msg, context, Colors.orange, Colors.black);
+                    else if (state is SelectedData)
+                      mySnackBar(
+                          state.msg, context, Colors.green, Colors.black);
+                  },
+                  builder: (context, state) {
+                    if (state is LoadingState) return myLoading();
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color.fromRGBO(0, 0, 0, 0.541),
+                                  blurRadius: 15,
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.white),
+                          margin: EdgeInsets.all(15),
+                          height: 0.07 * MediaQuery.of(context).size.height,
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.account_circle,
+                                  size: 30.0,
+                                  color: mycolor.blue,
+                                ),
+                                onPressed: () {
+                                  GoforWard(context, MyAccountSccreen());
+                                },
                               ),
-                              tabs: MyAppcubit.MyTabLabels,
-                            ),
-                          ),
-                          //************************************* */
-                          IconButton(
-                            icon: Icon(
-                              Icons.message_rounded,
-                              size: 30.0,
-                              color: mycolor.blue,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            color: mycolor.blue, width: 3),
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        myvalues('اسم المدير', 'محمد أحمد'),
-                                        myvalues('رقم الهاتف', '$_phone'),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            primary: mycolor.blue,
+                              //**************************** */
+                              Expanded(
+                                //tabbarLabels
+                                child: TabBar(
+                                  controller: _controller,
+                                  labelColor: mycolor.blue,
+                                  unselectedLabelColor: Color(0xff61000000),
+                                  labelPadding: EdgeInsets.all(5.0),
+                                  indicatorColor: mycolor.blue,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  indicatorWeight: 5.0,
+                                  labelStyle: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 18.0,
+                                  ),
+                                  tabs: MyAppcubit.MyTabLabels,
+                                ),
+                              ),
+                              //************************************* */
+                              IconButton(
+                                icon: Icon(
+                                  Icons.message_rounded,
+                                  size: 30.0,
+                                  color: mycolor.blue,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
                                             side: BorderSide(
-                                              width: 3.0,
-                                              color: mycolor.lightwight,
+                                                color: mycolor.blue, width: 3),
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            myvalues('اسم المدير', 'محمد أحمد'),
+                                            myvalues('رقم الهاتف', '$_phone'),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: mycolor.blue,
+                                                side: BorderSide(
+                                                  width: 3.0,
+                                                  color: mycolor.lightwight,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                ),
+                                              ),
+                                              onPressed: _hasCallSupport
+                                                  ? () => setState(() {
+                                                        _launched =
+                                                            _makePhoneCall(
+                                                                _phone);
+                                                      })
+                                                  : null,
+                                              child: _hasCallSupport
+                                                  ? const Text('انقر للاتصال ')
+                                                  : const Text(
+                                                      'الاتصال غير متاح'),
                                             ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
-                                            ),
-                                          ),
-                                          onPressed: _hasCallSupport
-                                              ? () => setState(() {
-                                                    _launched =
-                                                        _makePhoneCall(_phone);
-                                                  })
-                                              : null,
-                                          child: _hasCallSupport
-                                              ? const Text('انقر للاتصال ')
-                                              : const Text('الاتصال غير متاح'),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: TabBarView(controller: _controller, children: [
-                        Container(
-                          color: mycolor.blue,
                         ),
-                        Container(
-                          color: mycolor.yello,
+                        Expanded(
+                          child: TabBarView(controller: _controller, children: [
+                            Container(
+                              color: mycolor.blue,
+                            ),
+                            Container(
+                              color: mycolor.yello,
+                            ),
+                            // MyListOfTrips(context),
+                            // MyListOfTrips(context),
+                          ]),
                         ),
-                        // MyListOfTrips(context),
-                        // MyListOfTrips(context),
-                      ]),
-                    ),
-                  ],
+                      ],
+                    );
+                  },
                 ),
                 // BottomnavigationBar
                 bottomNavigationBar: DotNavigationBar(

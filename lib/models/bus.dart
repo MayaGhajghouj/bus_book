@@ -3,13 +3,13 @@ import 'package:mysql1/mysql1.dart';
 class Bus {
   int? busId;
   int busNumber;
-  int busSeats;
+  int? busSeats;
   String busType;
 
   Bus(
       {this.busId,
       required this.busNumber,
-      required this.busSeats,
+      this.busSeats,
       required this.busType});
 
   static Bus fromDB(ResultRow row) {

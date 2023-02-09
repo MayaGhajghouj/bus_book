@@ -1,11 +1,18 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
+import 'package:bus_book/Backend/myData.dart';
+import 'package:bus_book/models/reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
+
+import '../models/bus.dart';
+import '../models/driver.dart';
+import '../models/myTrip.dart';
+import '../models/trip.dart';
 
 Widget DefoultFormField({
   required TextEditingController controller,
@@ -529,112 +536,98 @@ mySnackBar(
     duration: const Duration(seconds: 2),
   ));
 }
+
 //********************** */
 //*************************************************************
-// Widget MyListOfTrips(context) {
-// // code meshooooooooooooooooooooooooo
-//   return ListView.separated(
-//     itemBuilder: (context, index) {
-//       Reservation r = Lists.reserves[index];
-//       Trip t = Lists.trips
-//           .where((element) => element.trip_id == r.reservatin_trip_id)
-//           .first;
-//       Bus b = Lists.buses.where((element) => element.bus_id == t.bus_id).first;
-//       Driver d = Lists.drivers
-//           .where((element) => element.driver_id == t.driver_id)
-//           .first;
-//       return mycard(
-//         context: context,
-//         driver: d,
-//         bus: b,
-//         reservation: r,
-//         trip: t,
-//       );
-//     },
-//     separatorBuilder: (context, index) {
-//       return SizedBox(
-//         height: 0.0,
-//       );
-//     },
-//     itemCount: Lists.reserves.length,
-//   );
-// }
+Widget MyListOfTrips(context) {
+// code meshooooooooooooooooooooooooo
+  return ListView.separated(
+    itemBuilder: (context, index) {
+      MyTrip myTrip = MyData.tripList[index];
+
+      return mycard(
+        context: context,
+        myTrip: myTrip,
+      );
+    },
+    separatorBuilder: (context, index) {
+      return SizedBox(
+        height: 0.0,
+      );
+    },
+    itemCount: MyData.tripList.length,
+  );
+}
 //=====================================================
 
 //************************** Trip information ****************************************** */
 
-// mycard({
-//   context,
-//   required Driver driver,
-//   required Bus bus,
-//   required Trip trip,
-//   required Reservation reservation,
-// }) {
-//   return InkWell(
-//     onTap: () {
-//       showDialog(
-//         context: context,
-//         builder: (context) {
-//           return AlertDialog(
-//             shape: RoundedRectangleBorder(
-//                 side: BorderSide(color: mycolor.blue, width: 3),
-//                 borderRadius: BorderRadius.circular(30)),
-//             content: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 myvalues('السائق', driver.driver_name),
-//                 myvalues(' رقم الهاتف', driver.driver_phone),
-//                 myvalues('نوع الباص', bus.bus_type),
-//                 myvalues('رقم الباص', bus.bus_number.toString()),
-//               ],
-//             ),
-//           );
-//         },
-//       );
-//     },
-//     child: Card(
-//       elevation: 10,
-//       margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceAround,
-//         children: [
-//           Expanded(
-//             flex: 1,
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 IconButton(
-//                     onPressed: () {},
-//                     color: mycolor.blue,
-//                     icon: Icon(Icons.delete_forever)),
-//                 IconButton(
-//                     onPressed: () {},
-//                     color: mycolor.blue,
-//                     icon: Icon(Icons.edit)),
-//               ],
-//             ),
-//           ),
-//           Expanded(
-//               flex: 3,
-//               child:
-//                   Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-//                 myvalues(
-//                     'وقت الرحلة ', trip.trip_time.toString().substring(0, 8)),
-//                 myvalues(
-//                     'تاريخ الرحلة', trip.trip_date.toString().substring(0, 10)),
-//                 myvalues(
-//                     'وقت وصول الباص',
-//                     reservation.reservation_arrive_time
-//                         .toString()
-//                         .substring(0, 8)),
-//                 myvalues('نوع الرحلة', trip.trip_type),
-//               ]))
-//         ],
-//       ),
-//     ),
-//   );
-// }
+mycard({
+  context,
+  required MyTrip myTrip,
+}) {
+  return InkWell(
+    onTap: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: mycolor.blue, width: 3),
+                borderRadius: BorderRadius.circular(30)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                myvalues('السائق', myTrip.driver.driverName),
+                myvalues(' رقم الهاتف', myTrip.driver.driverPhone),
+                myvalues('نوع الباص', myTrip.bus.busType),
+                myvalues('رقم الباص', myTrip.bus.busNumber.toString()),
+              ],
+            ),
+          );
+        },
+      );
+    },
+    child: Card(
+      elevation: 10,
+      margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                    onPressed: () {},
+                    color: mycolor.blue,
+                    icon: Icon(Icons.delete_forever)),
+                IconButton(
+                    onPressed: () {},
+                    color: mycolor.blue,
+                    icon: Icon(Icons.edit)),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              myvalues('موعد الرحلة ', myTrip.trip.tripDate.toString()),
+              myvalues('سعر الرحلة', myTrip.trip.price.toString()),
+              myvalues('وقت وصول الباص',
+                  myTrip.reservation.reservation_arrive_time.toString()),
+              myvalues('نوع الرحلة', myTrip.trip.tripType),
+            ]),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 //===================== error message ===================================
 myError({required String msg, required VoidCallback onPressed}) {
   return Center(
