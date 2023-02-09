@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 
 class Reservations {
-  int? reservatin_trip_id, resrervation_user_id, reservation_arrive_time;
+  int? reservatin_trip_id, resrervation_user_id;
+  Timer reservation_arrive_time;
 
   Reservations(
       {this.reservatin_trip_id,

@@ -112,9 +112,9 @@ class DataBase extends Cubit<DatabaseStates> {
         IndexOfMap++;
       }
       emit(SelectedData("تم جلب رحلات المستخدم:"));
-    }).catchError((error, stackTrace) {
+    }).catchError((error) {
       emit(ErrorSelectingDataState('[get_User_Trips_error ] $error'));
-      print("maya getUserTrips function error :($error) \n $stackTrace");
+      print("maya getUserTrips function error :($error) \n");
     });
   }
 //========================================================================
