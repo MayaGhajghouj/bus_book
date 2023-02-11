@@ -40,8 +40,7 @@ class _MainPageState extends State<MainPage>
       });
     });
     //=================== initilization =============================================
-    DataBase.get(context).connect();
-    DataBase.get(context).getUserTrips();
+    //DataBase.get(context).getUserTrips();
     //=================== initilization =============================================
 
     super.initState();

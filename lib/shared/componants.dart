@@ -543,7 +543,7 @@ Widget MyListOfTrips(context) {
 // code meshooooooooooooooooooooooooo
   return ListView.separated(
     itemBuilder: (context, index) {
-      MyTrip? myTrip = MyData.tripList[index];
+      MyTrip? myTrip = MyData.FutureTripList[index];
 
       return mycard(
         context: context,
@@ -555,7 +555,7 @@ Widget MyListOfTrips(context) {
         height: 0.0,
       );
     },
-    itemCount: MyData.tripList.length,
+    itemCount: MyData.FutureTripList.length,
   );
 }
 //=====================================================
@@ -615,10 +615,14 @@ mycard({
             flex: 3,
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              myvalues('موعد الرحلة ', myTrip.trip.tripDate.toString()),
+              myvalues(
+                  'موعد الرحلة ', myTrip.trip.tripDate.toString().substring(9)),
               myvalues('سعر الرحلة', myTrip.trip.price.toString()),
-              myvalues('وقت وصول الباص',
-                  myTrip.reservation.reservation_arrive_time.toString()),
+              myvalues(
+                  'وقت وصول الباص',
+                  myTrip.reservation.reservation_arrive_time
+                      .toString()
+                      .substring(2)),
               myvalues('نوع الرحلة', myTrip.trip.tripType),
             ]),
           ),

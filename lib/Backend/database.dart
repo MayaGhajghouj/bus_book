@@ -1,19 +1,10 @@
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/models/myTrip.dart';
-import 'package:bus_book/moduls/mainpage.dart';
-import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
-import 'package:bus_book/shared/Constants/mycolors.dart';
-import 'package:bus_book/shared/componants.dart';
-import 'package:drop_down_list/model/selected_list_item.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
-import '../models/bus.dart';
-import '../models/driver.dart';
 import '../models/manager.dart';
-import '../models/trip.dart';
 import '../models/user.dart';
 
 class DataBase extends Cubit<DatabaseStates> {
@@ -79,8 +70,9 @@ class DataBase extends Cubit<DatabaseStates> {
       if (value.isNotEmpty) {
         print('===================================================');
         print('****** تم نجاح عملية تسجيل الدخوول *************** ');
-
+        getUserTrips(email, password);
         print('===================================================');
+
         emit(SelectedData("تم تسجيل الدخول بنجاح "));
       } else {
         throw Exception(' الايميل او كلمة المرور غلط او ليس لديك حساب بعد');
@@ -91,10 +83,15 @@ class DataBase extends Cubit<DatabaseStates> {
       print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
     });
   }
+  //==================================================================================
 
-  int IndexOfMap = 0;
+  int Future_Trip_key = 0;
+  int Pre_Trip_Key = 0;
+
 //==================================================================================
-  Future<void> getUserTrips() async {
+  Future<void> getUserTrips(String email, String password) async {
+    Future_Trip_key = 0;
+    Pre_Trip_Key = 0;
     emit(LoadingState());
     await _myDB!.query('''
        select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
@@ -103,50 +100,30 @@ class DataBase extends Cubit<DatabaseStates> {
       r.reservation_arrive_time,
       u.user_name
       from bus_app_db.trip t,bus_app_db.driver d , bus_app_db.bus b, bus_app_db.reservation r ,bus_app_db.user u
-      where t.trip_driver_id=d.driver_id and t.trip_bus_id=b.bus_id and r.resrervation_user_id=u.user_id and r.reservatin_trip_id=t.trip_id
-      ''').then((value) {
+      where
+       t.trip_driver_id=d.driver_id 
+       and t.trip_bus_id=b.bus_id
+       and r.reservatin_trip_id=t.trip_id
+       and r.resrervation_user_id=(
+        select user_id from bus_app_db.user where (user_email,user_password)=(?,?)'
+       )''', [email, password]).then((value) {
       // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
       for (var row in value) {
         MyTrip t = MyTrip.fromDB(row);
-        MyData.tripList[IndexOfMap] = t;
-        IndexOfMap++;
+        if (t.trip.tripDate.year <= DateTime.now().year &&
+            t.trip.tripDate.month <= DateTime.now().month &&
+            t.trip.tripDate.day <= DateTime.now().day) {
+          MyData.PreTripList[Pre_Trip_Key] = t;
+          Pre_Trip_Key++;
+        } else {
+          MyData.FutureTripList[Future_Trip_key] = t;
+          Future_Trip_key++;
+        }
       }
       emit(SelectedData("تم جلب رحلات المستخدم:"));
     }).catchError((error) {
       emit(ErrorSelectingDataState('[get_User_Trips_error ] $error'));
       print("maya getUserTrips function error :($error) \n");
-    });
-  }
-//========================================================================
-
-  Future<void> getDrivers() async {
-    emit(LoadingState());
-    MyData.driversList.clear();
-    await _myDB!.query('select * from driver').then((value) {
-      for (var row in value) {
-        Driver d = Driver.fromDB(row);
-        MyData.driversList[d.driverId!] = d;
-      }
-      emit(SelectedData("تم جلب بيانات السائقين "));
-    }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getDrivers] $error'));
-      print("Owis getDrivers :($error) \n $stackTrace");
-    });
-  }
-
-  //===========================================================
-  Future<void> getBus() async {
-    emit(LoadingState());
-    MyData.busList.clear();
-    await _myDB!.query('select * from bus').then((value) {
-      for (var row in value) {
-        Bus b = Bus.fromDB(row);
-        MyData.busList[b.busId!] = b;
-      }
-      emit(SelectedData("تم جلب بيانات الحافلات"));
-    }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getBus] $error'));
-      print("Owis getBus :($error) \n $stackTrace");
     });
   }
 
@@ -162,22 +139,5 @@ class DataBase extends Cubit<DatabaseStates> {
       print("Owis getManager :($error) \n $stackTrace");
     });
   }
-  //===========================================================
-
-  Future<void> getTime() async {
-    emit(LoadingState());
-    MyData.timeItems.clear();
-    await _myDB!.query('select * from trip_time').then((value) {
-      for (var row in value) {
-        MyData.timeItems
-            .add(SelectedListItem(name: row[1], value: row[0].toString()));
-      }
-      emit(SelectedData("تم جلب الاوقات "));
-    }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getTime] $error'));
-      print("Owis getTime :($error) \n $stackTrace");
-    });
-  }
-
   //===========================================================
 }
