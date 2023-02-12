@@ -68,30 +68,30 @@ class DataBase extends Cubit<DatabaseStates> {
         'select * from user where (user_email,user_password)=(?,?)',
         [email, password]).then((value) {
       if (value.isNotEmpty) {
+        for (var row in value) {
+          MyData.user = User.fromDB(row);
+        }
+        getUserTrips(MyData.user!.userId);
         print('===================================================');
         print('****** تم نجاح عملية تسجيل الدخوول *************** ');
-        getUserTrips(email, password);
+
         print('===================================================');
 
         emit(SelectedData("تم تسجيل الدخول بنجاح "));
       } else {
         throw Exception(' الايميل او كلمة المرور غلط او ليس لديك حساب بعد');
-        // mySnackBar('لبس لديك حساب ', context, Colors.red, Colors.white);
       }
     }).catchError((error, stackTrace) {
       emit(ErrorSelectingDataState('False login here $error'));
-      print("inside USER LOGIN ERROR FUNCTION  :($error) \n $stackTrace");
+      print("inside USER LOGIN ERROR FUNCTION  :($error) \n");
     });
   }
-  //==================================================================================
-
-  int Future_Trip_key = 0;
-  int Pre_Trip_Key = 0;
 
 //==================================================================================
-  Future<void> getUserTrips(String email, String password) async {
-    Future_Trip_key = 0;
-    Pre_Trip_Key = 0;
+  Future<void> getUserTrips(int? user_id) async {
+    MyData.FutureTripList.clear();
+    MyData.PreTripList.clear();
+    MyTrip? t;
     emit(LoadingState());
     await _myDB!.query('''
        select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
@@ -104,21 +104,19 @@ class DataBase extends Cubit<DatabaseStates> {
        t.trip_driver_id=d.driver_id 
        and t.trip_bus_id=b.bus_id
        and r.reservatin_trip_id=t.trip_id
-       and r.resrervation_user_id=(
-        select user_id from bus_app_db.user where (user_email,user_password)=(?,?)'
-       )''', [email, password]).then((value) {
+       and r.resrervation_user_id=(?)
+       ''', [user_id]).then((value) {
       // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
       for (var row in value) {
-        MyTrip t = MyTrip.fromDB(row);
-        if (t.trip.tripDate.year <= DateTime.now().year &&
-            t.trip.tripDate.month <= DateTime.now().month &&
-            t.trip.tripDate.day <= DateTime.now().day) {
-          MyData.PreTripList[Pre_Trip_Key] = t;
-          Pre_Trip_Key++;
-        } else {
-          MyData.FutureTripList[Future_Trip_key] = t;
-          Future_Trip_key++;
-        }
+        t = MyTrip.fromDB(row);
+        // MyData.FutureTripList.add(t!);
+      }
+      if (t!.trip.tripDate.year <= DateTime.now().year &&
+          t!.trip.tripDate.month <= DateTime.now().month &&
+          t!.trip.tripDate.day <= DateTime.now().day) {
+        MyData.PreTripList.add(t!);
+      } else {
+        MyData.FutureTripList.add(t!);
       }
       emit(SelectedData("تم جلب رحلات المستخدم:"));
     }).catchError((error) {
@@ -128,16 +126,15 @@ class DataBase extends Cubit<DatabaseStates> {
   }
 
   //===========================================================
-  //===========================================================
-  Future<void> getManager() async {
-    emit(LoadingState());
-    await _myDB!.query('select * from manager').then((value) {
-      MyData.manager = Manager.fromDB(value.first);
-      emit(SelectedData("تم جلب بيانات المدير"));
-    }).catchError((error, stackTrace) {
-      emit(ErrorSelectingDataState('[getManager] $error'));
-      print("Owis getManager :($error) \n $stackTrace");
-    });
-  }
+  // Future<void> getManager() async {
+  //   emit(LoadingState());
+  //   await _myDB!.query('select * from manager').then((value) {
+  //     MyData.manager = Manager.fromDB(value.first);
+  //     emit(SelectedData("تم جلب بيانات المدير"));
+  //   }).catchError((error, stackTrace) {
+  //     emit(ErrorSelectingDataState('[getManager] $error'));
+  //     print("Owis getManager :($error) \n $stackTrace");
+  //   });
+  // }
   //===========================================================
 }

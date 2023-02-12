@@ -200,8 +200,8 @@ class _MainPageState extends State<MainPage>
                         ),
                         Expanded(
                           child: TabBarView(controller: _controller, children: [
-                            MyListOfTrips(this.context),
-                            MyListOfTrips(this.context),
+                            MyList_Pre_Trip(this.context),
+                            MyList_Future_Trip(this.context),
                           ]),
                         ),
                       ],

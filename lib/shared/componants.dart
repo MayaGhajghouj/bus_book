@@ -539,11 +539,31 @@ mySnackBar(
 
 //********************** */
 //*************************************************************
-Widget MyListOfTrips(context) {
-// code meshooooooooooooooooooooooooo
+Widget MyList_Future_Trip(context) {
+// هذا التابع ليتم استدعائه في التاب بار فيو ويمثل الرحلات المستقبلية
   return ListView.separated(
     itemBuilder: (context, index) {
       MyTrip? myTrip = MyData.FutureTripList[index];
+
+      return mycard(
+        context: context,
+        myTrip: myTrip!,
+      );
+    },
+    separatorBuilder: (context, index) {
+      return SizedBox(
+        height: 0.0,
+      );
+    },
+    itemCount: MyData.FutureTripList.length,
+  );
+}
+
+Widget MyList_Pre_Trip(context) {
+// هذا التابع ليتم استدعائه في التاب بار فيو ويمثل الرحلات السابقة
+  return ListView.separated(
+    itemBuilder: (context, index) {
+      MyTrip? myTrip = MyData.PreTripList[index];
 
       return mycard(
         context: context,
@@ -592,42 +612,13 @@ mycard({
       elevation: 10,
       margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                    onPressed: () {},
-                    color: mycolor.blue,
-                    icon: Icon(Icons.delete_forever)),
-                IconButton(
-                    onPressed: () {},
-                    color: mycolor.blue,
-                    icon: Icon(Icons.edit)),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              myvalues(
-                  'موعد الرحلة ', myTrip.trip.tripDate.toString().substring(9)),
-              myvalues('سعر الرحلة', myTrip.trip.price.toString()),
-              myvalues(
-                  'وقت وصول الباص',
-                  myTrip.reservation.reservation_arrive_time
-                      .toString()
-                      .substring(2)),
-              myvalues('نوع الرحلة', myTrip.trip.tripType),
-            ]),
-          ),
-        ],
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        myvalues('موعد الرحلة ', myTrip.trip.tripDate.toString()),
+        myvalues('سعر الرحلة', myTrip.trip.price.toString()),
+        myvalues('وقت وصول الباص',
+            myTrip.reservation.reservation_arrive_time.toString()),
+        myvalues('نوع الرحلة', myTrip.trip.tripType),
+      ]),
     ),
   );
 }

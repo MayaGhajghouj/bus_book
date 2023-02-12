@@ -1,9 +1,10 @@
-import '../models/manager.dart';
+import 'package:bus_book/models/user.dart';
+
 import '../models/myTrip.dart';
 
 class MyData {
-  static Map<int, MyTrip> FutureTripList = {};
-  static Map<int, MyTrip> PreTripList = {};
+  static List<MyTrip> FutureTripList = [];
+  static List<MyTrip> PreTripList = [];
 
-  static Manager? manager;
+  static User? user;
 }
