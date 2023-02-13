@@ -89,9 +89,6 @@ class DataBase extends Cubit<DatabaseStates> {
 
 //==================================================================================
   Future<void> getUserTrips(int? user_id) async {
-    MyData.FutureTripList.clear();
-    MyData.PreTripList.clear();
-    MyTrip? t;
     emit(LoadingState());
     await _myDB!.query('''
        select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
@@ -107,17 +104,18 @@ class DataBase extends Cubit<DatabaseStates> {
        and r.resrervation_user_id=(?)
        ''', [user_id]).then((value) {
       // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
+      MyData.FutureTripList.clear();
+      MyData.PreTripList.clear();
       for (var row in value) {
-        t = MyTrip.fromDB(row);
-        // MyData.FutureTripList.add(t!);
+        MyTrip t = MyTrip.fromDB(row);
+        var now = DateTime.now();
+        var time = t.trip.tripDate;
+        if (now.compareTo(time) == 1) {
+          MyData.PreTripList.add(t);
+        } else
+          MyData.FutureTripList.add(t);
       }
-      if (t!.trip.tripDate.year <= DateTime.now().year &&
-          t!.trip.tripDate.month <= DateTime.now().month &&
-          t!.trip.tripDate.day <= DateTime.now().day) {
-        MyData.PreTripList.add(t!);
-      } else {
-        MyData.FutureTripList.add(t!);
-      }
+
       emit(SelectedData("تم جلب رحلات المستخدم:"));
     }).catchError((error) {
       emit(ErrorSelectingDataState('[get_User_Trips_error ] $error'));
