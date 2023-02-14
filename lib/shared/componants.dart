@@ -543,11 +543,11 @@ Widget MyList_Future_Trip(context) {
 // هذا التابع ليتم استدعائه في التاب بار فيو ويمثل الرحلات المستقبلية
   return ListView.separated(
     itemBuilder: (context, index) {
-      MyTrip? myTrip = MyData.FutureTripList[index];
+      MyTrip myTrip = MyData.FutureTripList[index];
 
       return mycard(
         context: context,
-        myTrip: myTrip!,
+        myTrip: myTrip,
       );
     },
     separatorBuilder: (context, index) {
@@ -563,11 +563,11 @@ Widget MyList_Pre_Trip(context) {
 // هذا التابع ليتم استدعائه في التاب بار فيو ويمثل الرحلات السابقة
   return ListView.separated(
     itemBuilder: (context, index) {
-      MyTrip? myTrip = MyData.PreTripList[index];
+      MyTrip myTrip = MyData.PreTripList[index];
 
       return mycard(
         context: context,
-        myTrip: myTrip!,
+        myTrip: myTrip,
       );
     },
     separatorBuilder: (context, index) {
@@ -613,10 +613,14 @@ mycard({
       margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        myvalues('موعد الرحلة ', myTrip.trip.tripDate.toString()),
+        myvalues(
+            'موعد الرحلة ', myTrip.trip.tripDate.toString().substring(0, 16)),
         myvalues('سعر الرحلة', myTrip.trip.price.toString()),
-        myvalues('وقت وصول الباص',
-            myTrip.reservation.reservation_arrive_time.toString()),
+        myvalues(
+            'وقت وصول الباص',
+            myTrip.reservation.reservation_arrive_time
+                .toString()
+                .substring(0, 5)),
         myvalues('نوع الرحلة', myTrip.trip.tripType),
       ]),
     ),

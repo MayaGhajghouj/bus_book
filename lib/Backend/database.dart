@@ -54,9 +54,14 @@ class DataBase extends Cubit<DatabaseStates> {
       emit(
           InsertedData(" يرجى تسجيل الدخول ، تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
-      print(
-          "=========================inside USER SIGN UP ERROR FUNCTION ====>>($error) \n $stackTrace");
-      emit(ErrorInsertingDataState('[insert_User_error] $error'));
+      if (error.toString().contains('Duplicate entry'))
+        emit(ErrorInsertingDataState(
+            'هذا حساب مكرر .. يرجى استخدام ايميل جديد '));
+      else {
+        print(
+            "=========================inside USER SIGN UP ERROR FUNCTION ====>>($error) \n $stackTrace");
+        emit(ErrorInsertingDataState('[insert_User_error] $error'));
+      }
     });
   }
   //================= user login ==========================================
@@ -101,7 +106,8 @@ class DataBase extends Cubit<DatabaseStates> {
        t.trip_driver_id=d.driver_id 
        and t.trip_bus_id=b.bus_id
        and r.reservatin_trip_id=t.trip_id
-       and r.resrervation_user_id=(?)
+       and r.resrervation_user_id= u.user_id
+       and u.user_id=(?)
        ''', [user_id]).then((value) {
       // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
       MyData.FutureTripList.clear();
@@ -112,10 +118,10 @@ class DataBase extends Cubit<DatabaseStates> {
         var time = t.trip.tripDate;
         if (now.compareTo(time) == 1) {
           MyData.PreTripList.add(t);
-        } else
+        } else {
           MyData.FutureTripList.add(t);
+        }
       }
-
       emit(SelectedData("تم جلب رحلات المستخدم:"));
     }).catchError((error) {
       emit(ErrorSelectingDataState('[get_User_Trips_error ] $error'));
