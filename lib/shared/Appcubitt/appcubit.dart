@@ -81,24 +81,9 @@ class AppCubit extends Cubit<AppStates> {
       name: "16:0",
     ),
   ];
-  List<SelectedListItem> Time_AdditionalTRipMenue = [
-    SelectedListItem(
-      name: "8:0",
-    ),
-    SelectedListItem(
-      name: "10:0",
-    ),
-    SelectedListItem(
-      name: "12:0",
-    ),
-    SelectedListItem(
-      name: "14:0",
-    ),
-    SelectedListItem(
-      name: "16:0",
-    ),
-  ];
-
+  TextEditingController Type_AdditionalTrip = TextEditingController();
+  TextEditingController Date_AdditionalTrip = TextEditingController();
+  TextEditingController Time_AdditionalTrip = TextEditingController();
   List<SelectedListItem> Type_AdditionalTRipMenue = [
     SelectedListItem(
       name: "ذهاب",
@@ -107,29 +92,7 @@ class AppCubit extends Cubit<AppStates> {
       name: "إياب",
     ),
   ];
-  List<SelectedListItem> Day_AdditionalTRipMenue = [
-    SelectedListItem(
-      name: "السبت",
-    ),
-    SelectedListItem(
-      name: "الأحد",
-    ),
-    SelectedListItem(
-      name: "الإثنين",
-    ),
-    SelectedListItem(
-      name: "الثلاثاء",
-    ),
-    SelectedListItem(
-      name: "الأربعاء",
-    ),
-    SelectedListItem(
-      name: "الخميس",
-    ),
-    SelectedListItem(
-      name: "الجمعة",
-    ),
-  ];
+
   //=============================================================================
   List<Widget> MyTabLabels = [
     // ignore: prefer_const_constructors

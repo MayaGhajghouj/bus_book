@@ -1,18 +1,17 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
+import 'package:bus_book/Backend/database.dart';
 import 'package:bus_book/Backend/myData.dart';
-import 'package:bus_book/models/reservations.dart';
+import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
+import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 
-import '../models/bus.dart';
-import '../models/driver.dart';
 import '../models/myTrip.dart';
-import '../models/trip.dart';
 
 Widget DefoultFormField({
   required TextEditingController controller,
@@ -101,37 +100,6 @@ Widget DefoultFormField({
 }
 
 //====================================================================================
-void MyDropdown({
-  required TextEditingController controller,
-  dynamic context,
-  required List<SelectedListItem> mylist,
-  String? title,
-}) {
-  DropDownState(
-    DropDown(
-      data: mylist,
-      bottomSheetTitle: Text(
-        title!,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-        ),
-      ),
-      dropDownBackgroundColor: Color(0XFffecf3f9),
-      enableMultipleSelection: false,
-      selectedItems: (List<dynamic> selectedList) {
-        List<String> list = [];
-        for (var item in selectedList) {
-          if (item is SelectedListItem) {
-            list.add(item.name);
-          }
-          controller.text = list[0].toString();
-        }
-      },
-    ),
-  ).showModal(context);
-}
-//************************************************************************* */
 
 Widget myStandardScreen(context) {
   return Container(
@@ -201,28 +169,6 @@ myvalues(String k, String v) {
         ),
       ],
     ),
-  );
-}
-
-//************************* Manager information******************************************* */
-void myShowDialog(context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-            side: BorderSide(color: mycolor.blue, width: 3),
-            borderRadius: BorderRadius.circular(30)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            myvalues('اسم المدير', 'محمد أحمد'),
-            myvalues('رقم الهاتف', '0994033360'),
-            owbutton(onpress: () {}),
-          ],
-        ),
-      );
-    },
   );
 }
 
@@ -332,9 +278,9 @@ Widget BuildItemofWeekTable({
 //===========================AdditionalTrip============================================
 void AdditonalTrip({
   context,
-  required TextEditingController Type_AdditionalTrip,
-  required TextEditingController Day_AdditionalTrip,
   required TextEditingController Time_AdditionalTrip,
+  required TextEditingController Date_AdditionalTrip,
+  required TextEditingController Type_AdditionalTrip,
 }) {
   showDialog(
     context: context,
@@ -347,7 +293,7 @@ void AdditonalTrip({
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'اختر موعد رحلتك الإضافية ',
+              'املأ معلومات الرحلة',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20.0,
@@ -355,10 +301,65 @@ void AdditonalTrip({
               ),
             ),
             DefoultFormField(
-                controller: Type_AdditionalTrip,
-                myhinttext: '',
+                readonly: true,
+                controller: Time_AdditionalTrip,
+                myhinttext: 'اختر وقت الرحلة',
                 typeofkeybord: TextInputType.text,
-                suffixicon: Icons.trip_origin_outlined,
+                validate: (String? m) {
+                  if (m!.isEmpty) return "يجب اختيار وقت الرحلة ";
+                  return null;
+                },
+                ontap: () async {
+                  await DataBase.get(context).getimes();
+                  MyDropdown(
+                    controller: Time_AdditionalTrip,
+                    mylist: MyData.timeItems,
+                    context: context,
+                    title: "اختر وقت الرحلة",
+                  );
+                }),
+            DefoultFormField(
+                controller: Date_AdditionalTrip,
+                myhinttext: 'اختر تاريخ الرحلة',
+                typeofkeybord: TextInputType.text,
+                validate: (String? m) {
+                  if (m!.isEmpty) return "يجب اختيار التاريخ  ";
+                  return null;
+                },
+                readonly: true,
+                ontap: () {
+                  showDatePicker(
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: mycolor.blue,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: mycolor.blue,
+                                  ),
+                                ),
+                              ),
+                              child: child ?? Container(),
+                            );
+                          },
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(const Duration(days: 6)))
+                      .then((value) {
+                    if (value != null) {
+                      Date_AdditionalTrip.text =
+                          value.toString().substring(0, 10);
+                    }
+                  });
+                }),
+            DefoultFormField(
+                controller: Type_AdditionalTrip,
+                myhinttext: 'اختر نوع الرحلة',
+                typeofkeybord: TextInputType.text,
+                readonly: true,
                 validate: (String? m) {
                   if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
                   return null;
@@ -368,44 +369,34 @@ void AdditonalTrip({
                     controller: Type_AdditionalTrip,
                     mylist: AppCubit.get(context).Type_AdditionalTRipMenue,
                     context: context,
-                    title: "نوع الرحلة",
+                    title: "اختر نوع الرحلة",
                   );
                 }),
-            DefoultFormField(
-                controller: Day_AdditionalTrip,
-                myhinttext: '',
-                typeofkeybord: TextInputType.text,
-                suffixicon: Icons.view_day,
-                validate: (String? m) {
-                  if (m!.isEmpty) return "يجب اختيار اليوم  ";
-                  return null;
-                },
-                ontap: () {
-                  MyDropdown(
-                    controller: Day_AdditionalTrip,
-                    mylist: AppCubit.get(context).Day_AdditionalTRipMenue,
-                    context: context,
-                    title: "اليوم الذي اريد به الرحلة",
+            submitbutton(
+                mytext: 'إرسال',
+                pressthisbutton: () {
+                  var time = Time_AdditionalTrip.text.split(':');
+                  Duration x = Duration(
+                      hours: int.parse(time[0]), minutes: int.parse(time[1]));
+                  var tripDate =
+                      DateTime.parse(Date_AdditionalTrip.text).add(x);
+                  TempReservations AddTrip = new TempReservations(
+                    userId: MyData.user!.userId,
+                    TripType: Type_AdditionalTrip.text,
+                    date: tripDate,
+                    type: 1,
                   );
+                  DataBase.get(context).insertTrip(AddTrip).then((value) {
+                    Date_AdditionalTrip.clear();
+                    Time_AdditionalTrip.clear();
+                    Type_AdditionalTrip.clear();
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog();
+                        });
+                  });
                 }),
-            DefoultFormField(
-                controller: Time_AdditionalTrip,
-                myhinttext: '',
-                typeofkeybord: TextInputType.text,
-                suffixicon: Icons.timer,
-                validate: (String? m) {
-                  if (m!.isEmpty) return "يجب اختيار الوقت  ";
-                  return null;
-                },
-                ontap: () {
-                  MyDropdown(
-                    controller: Time_AdditionalTrip,
-                    mylist: AppCubit.get(context).Time_AdditionalTRipMenue,
-                    context: context,
-                    title: "وقت الرحلة",
-                  );
-                }),
-            submitbutton(mytext: 'إرسال', pressthisbutton: () {}),
           ],
         ),
       );
@@ -678,3 +669,39 @@ myLoading() {
     ),
   );
 }
+
+//===========================================================================
+void MyDropdown({
+  required TextEditingController controller,
+  dynamic context,
+  required List<SelectedListItem> mylist,
+  String? title,
+}) {
+  DropDownState(
+    DropDown(
+      data: mylist,
+      bottomSheetTitle: Text(
+        title!,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20.0,
+        ),
+      ),
+      dropDownBackgroundColor: Color(0XFffecf3f9),
+      enableMultipleSelection: false,
+      selectedItems: (List<dynamic> selectedList) {
+        List<String> list = [];
+        for (var item in selectedList) {
+          if (item is SelectedListItem) {
+            list.add(item.name);
+          }
+          controller.text = list[0].toString();
+        }
+      },
+    ),
+  ).showModal(context);
+}
+//************************************************************************* */
+
+
+

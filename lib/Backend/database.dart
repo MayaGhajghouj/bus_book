@@ -1,7 +1,9 @@
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/models/myTrip.dart';
+import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
+import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
 import '../models/manager.dart';
@@ -76,7 +78,6 @@ class DataBase extends Cubit<DatabaseStates> {
         for (var row in value) {
           MyData.user = User.fromDB(row);
         }
-        getUserTrips(MyData.user!.userId);
         print('===================================================');
         print('****** تم نجاح عملية تسجيل الدخوول *************** ');
 
@@ -130,15 +131,54 @@ class DataBase extends Cubit<DatabaseStates> {
   }
 
   //===========================================================
-  // Future<void> getManager() async {
-  //   emit(LoadingState());
-  //   await _myDB!.query('select * from manager').then((value) {
-  //     MyData.manager = Manager.fromDB(value.first);
-  //     emit(SelectedData("تم جلب بيانات المدير"));
-  //   }).catchError((error, stackTrace) {
-  //     emit(ErrorSelectingDataState('[getManager] $error'));
-  //     print("Owis getManager :($error) \n $stackTrace");
-  //   });
-  // }
+  Future<void> getManager() async {
+    emit(LoadingState());
+    await _myDB!.query('select * from manager').then((value) {
+      MyData.mymanager = Manager.fromDB(value.last);
+      emit(SelectedData("تم جلب بيانات المدير"));
+    }).catchError((error) {
+      emit(ErrorSelectingDataState('[getManager] $error'));
+      print("Owis getManager :($error) \n ");
+    });
+  }
+
   //===========================================================
+
+  Future<void> getimes() async {
+    emit(LoadingState());
+    MyData.timeItems.clear();
+    await _myDB!.query('select * from trip_time').then((value) {
+      for (var row in value) {
+        MyData.timeItems.add(SelectedListItem(name: row[1]));
+      }
+      emit(SelectedData('تم جلب الأوقات'));
+    }).catchError((error) {
+      emit(ErrorSelectingDataState('خطأ في جلب الأوقات '));
+      print("maya getTime :($error) \n ");
+    });
+  }
+
+  //================Add additional trip=====================================
+  Future<void> insertTrip(TempReservations trip) async {
+    emit(LoadingState());
+    await _myDB!.query('''
+    INSERT INTO temp_reservation
+    (
+    temp_reservation_user_id,
+    temp_reservation_trip_type,
+    temp_reservation_date,
+    temp_reservation_type)
+    VALUES(?,?,?,?);
+    ''', [
+      trip.userId,
+      trip.TripType!,
+      trip.date!.toUtc(),
+      trip.type,
+    ]).then((value) {
+      emit(InsertedData("تم اضافة بيانات الرحلة الاضافية "));
+    }).catchError((error, stackTrace) {
+      emit(ErrorInsertingDataState('[insertTrip] $error'));
+      print("خطأ في تابع ادراج رحلة اضافية :($error) \n $stackTrace");
+    });
+  }
 }

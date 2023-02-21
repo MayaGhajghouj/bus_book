@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Backend/myData.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -40,7 +42,8 @@ class _MainPageState extends State<MainPage>
       });
     });
     //=================== initilization =============================================
-    //DataBase.get(context).getUserTrips();
+    DataBase.get(context).getUserTrips(MyData.user!.userId);
+    DataBase.get(context).getManager();
     //=================== initilization =============================================
 
     super.initState();
@@ -53,16 +56,6 @@ class _MainPageState extends State<MainPage>
     );
     await launchUrl(launchUri);
   }
-
-  @override
-  void dispose() {
-    // AppCubit.get(context).disconnectToDB();
-    super.dispose();
-  }
-
-  TextEditingController Type_AdditionalTrip = TextEditingController();
-  TextEditingController Day_AdditionalTrip = TextEditingController();
-  TextEditingController Time_AdditionalTrip = TextEditingController();
 
 //****************************************
   Widget build(BuildContext context) {
@@ -161,8 +154,10 @@ class _MainPageState extends State<MainPage>
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            myvalues('اسم المدير', 'محمد أحمد'),
-                                            myvalues('رقم الهاتف', '$_phone'),
+                                            myvalues('اسم المدير',
+                                                MyData.mymanager!.name),
+                                            myvalues('رقم الهاتف',
+                                                MyData.mymanager!.phone),
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                 primary: mycolor.blue,
@@ -222,9 +217,9 @@ class _MainPageState extends State<MainPage>
                     else {
                       AdditonalTrip(
                         context: context,
-                        Type_AdditionalTrip: Type_AdditionalTrip,
-                        Day_AdditionalTrip: Day_AdditionalTrip,
-                        Time_AdditionalTrip: Time_AdditionalTrip,
+                        Type_AdditionalTrip: MyAppcubit.Type_AdditionalTrip,
+                        Date_AdditionalTrip: MyAppcubit.Date_AdditionalTrip,
+                        Time_AdditionalTrip: MyAppcubit.Time_AdditionalTrip,
                       );
                     }
                   },
