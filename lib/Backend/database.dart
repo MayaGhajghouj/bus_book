@@ -130,6 +130,25 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
+//======================== update account informations ===============================
+  Future<void> UpdateAccountInfo(User u) async {
+    emit(LoadingState());
+    await _myDB!.query(
+        'UPDATE user SET user_name = ?, user_phone = ?, user_address = ?, user_email = ?, user_password = ? WHERE user_id = ?',
+        [
+          u.userName,
+          u.userPhone,
+          u.userAddress,
+          u.userEmail,
+          u.userPassword,
+          u.userId
+        ]).then((value) {
+      emit(UpdatedData('تم تحديث بيانات الحساب الخاصة بك'));
+    }).catchError((onError) {
+      emit(ErrorUpdatingDataState('حصل خطأ في تعديل بياناات  الحساب'));
+    });
+  }
+
   //===========================================================
   Future<void> getManager() async {
     emit(LoadingState());

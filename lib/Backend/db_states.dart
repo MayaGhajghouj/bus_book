@@ -65,20 +65,6 @@ class ErrorInsertingDataState extends DatabaseStates {
   ErrorInsertingDataState(this.msg);
 }
 
-class DeletedData extends DatabaseStates {
-  DeletedData(this.msg);
-
-  @override
-  String msg;
-}
-
-class ErrorDeletingDataState extends DatabaseStates {
-  @override
-  String msg;
-
-  ErrorDeletingDataState(this.msg);
-}
-
 class UpdatedData extends DatabaseStates {
   UpdatedData(this.msg);
 
