@@ -53,12 +53,7 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: BlocConsumer<DataBase, DatabaseStates>(
-                listener: (context, state) {
-                  if (state is ErrorUpdatingDataState)
-                    mySnackBar(state.msg, context, Colors.orange, Colors.black);
-                  else if (state is UpdatedData)
-                    mySnackBar(state.msg, context, Colors.green, Colors.black);
-                },
+                listener: (context, state) {},
                 builder: (context, state) {
                   return SingleChildScrollView(
                     child: Column(
@@ -186,7 +181,15 @@ class _MyAccountSccreenState extends State<MyAccountSccreen> {
                                     }),
                                 owbutton(onpress: () {
                                   if (formkey.currentState!.validate()) {
-                                    print(Emailcontroller);
+                                    User u = User(
+                                      userId: MyData.user!.userId,
+                                      userName: Namecontroller.text,
+                                      userAddress: Addresscontroller.text,
+                                      userEmail: Emailcontroller.text,
+                                      userPassword: passwordcontroller.text,
+                                      userPhone: Phonecontroller.text,
+                                    );
+                                    DataBase.get(context).UpdateAccountInfo(u);
                                   }
                                 }),
                               ],

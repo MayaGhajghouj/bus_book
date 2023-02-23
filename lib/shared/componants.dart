@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors
 
 import 'package:bus_book/Backend/database.dart';
+import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
@@ -9,6 +10,7 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 
 import '../models/myTrip.dart';
@@ -289,115 +291,126 @@ void AdditonalTrip({
         shape: RoundedRectangleBorder(
             side: BorderSide(color: mycolor.blue, width: 5),
             borderRadius: BorderRadius.circular(30)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'املأ معلومات الرحلة',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-                color: mycolor.blue,
-              ),
-            ),
-            DefoultFormField(
-                readonly: true,
-                controller: Time_AdditionalTrip,
-                myhinttext: 'اختر وقت الرحلة',
-                typeofkeybord: TextInputType.text,
-                validate: (String? m) {
-                  if (m!.isEmpty) return "يجب اختيار وقت الرحلة ";
-                  return null;
-                },
-                ontap: () async {
-                  await DataBase.get(context).getimes();
-                  MyDropdown(
+        content: BlocConsumer<DataBase, DatabaseStates>(
+          listener: (context, state) {
+            if (state is InsertedData) {
+              Navigator.of(context).pop();
+            }
+          },
+          builder: (context, state) {
+            if (state is LoadingState)
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [myLoading()],
+              );
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'املأ معلومات الرحلة',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                    color: mycolor.blue,
+                  ),
+                ),
+                DefoultFormField(
+                    readonly: true,
                     controller: Time_AdditionalTrip,
-                    mylist: MyData.timeItems,
-                    context: context,
-                    title: "اختر وقت الرحلة",
-                  );
-                }),
-            DefoultFormField(
-                controller: Date_AdditionalTrip,
-                myhinttext: 'اختر تاريخ الرحلة',
-                typeofkeybord: TextInputType.text,
-                validate: (String? m) {
-                  if (m!.isEmpty) return "يجب اختيار التاريخ  ";
-                  return null;
-                },
-                readonly: true,
-                ontap: () {
-                  showDatePicker(
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: ColorScheme.light(
-                                  primary: mycolor.blue,
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: mycolor.blue,
-                                  ),
-                                ),
-                              ),
-                              child: child ?? Container(),
-                            );
-                          },
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 6)))
-                      .then((value) {
-                    if (value != null) {
-                      Date_AdditionalTrip.text =
-                          value.toString().substring(0, 10);
-                    }
-                  });
-                }),
-            DefoultFormField(
-                controller: Type_AdditionalTrip,
-                myhinttext: 'اختر نوع الرحلة',
-                typeofkeybord: TextInputType.text,
-                readonly: true,
-                validate: (String? m) {
-                  if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
-                  return null;
-                },
-                ontap: () {
-                  MyDropdown(
-                    controller: Type_AdditionalTrip,
-                    mylist: AppCubit.get(context).Type_AdditionalTRipMenue,
-                    context: context,
-                    title: "اختر نوع الرحلة",
-                  );
-                }),
-            submitbutton(
-                mytext: 'إرسال',
-                pressthisbutton: () {
-                  var time = Time_AdditionalTrip.text.split(':');
-                  Duration x = Duration(
-                      hours: int.parse(time[0]), minutes: int.parse(time[1]));
-                  var tripDate =
-                      DateTime.parse(Date_AdditionalTrip.text).add(x);
-                  TempReservations AddTrip = new TempReservations(
-                    userId: MyData.user!.userId,
-                    TripType: Type_AdditionalTrip.text,
-                    date: tripDate,
-                    type: 1,
-                  );
-                  DataBase.get(context).insertTrip(AddTrip).then((value) {
-                    Date_AdditionalTrip.clear();
-                    Time_AdditionalTrip.clear();
-                    Type_AdditionalTrip.clear();
-                    showDialog(
+                    myhinttext: 'اختر وقت الرحلة',
+                    typeofkeybord: TextInputType.text,
+                    validate: (String? m) {
+                      if (m!.isEmpty) return "يجب اختيار وقت الرحلة ";
+                      return null;
+                    },
+                    ontap: () async {
+                      await DataBase.get(context).getimes();
+                      MyDropdown(
+                        controller: Time_AdditionalTrip,
+                        mylist: MyData.timeItems,
                         context: context,
-                        builder: (context) {
-                          return AlertDialog();
-                        });
-                  });
-                }),
-          ],
+                        title: "اختر وقت الرحلة",
+                      );
+                    }),
+                DefoultFormField(
+                    controller: Date_AdditionalTrip,
+                    myhinttext: 'اختر تاريخ الرحلة',
+                    typeofkeybord: TextInputType.text,
+                    validate: (String? m) {
+                      if (m!.isEmpty) return "يجب اختيار التاريخ  ";
+                      return null;
+                    },
+                    readonly: true,
+                    ontap: () {
+                      showDatePicker(
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: ColorScheme.light(
+                                      primary: mycolor.blue,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: mycolor.blue,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child ?? Container(),
+                                );
+                              },
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 6)))
+                          .then((value) {
+                        if (value != null) {
+                          Date_AdditionalTrip.text =
+                              value.toString().substring(0, 10);
+                        }
+                      });
+                    }),
+                DefoultFormField(
+                    controller: Type_AdditionalTrip,
+                    myhinttext: 'اختر نوع الرحلة',
+                    typeofkeybord: TextInputType.text,
+                    readonly: true,
+                    validate: (String? m) {
+                      if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
+                      return null;
+                    },
+                    ontap: () {
+                      MyDropdown(
+                        controller: Type_AdditionalTrip,
+                        mylist: AppCubit.get(context).Type_AdditionalTRipMenue,
+                        context: context,
+                        title: "اختر نوع الرحلة",
+                      );
+                    }),
+                submitbutton(
+                    mytext: 'إرسال',
+                    pressthisbutton: () {
+                      var time = Time_AdditionalTrip.text.split(':');
+                      Duration x = Duration(
+                          hours: int.parse(time[0]),
+                          minutes: int.parse(time[1]));
+                      var tripDate =
+                          DateTime.parse(Date_AdditionalTrip.text).add(x);
+                      TempReservations AddTrip = new TempReservations(
+                        userId: MyData.user!.userId,
+                        TripType: Type_AdditionalTrip.text,
+                        date: tripDate,
+                        type: 1,
+                      );
+                      DataBase.get(context).insertTrip(AddTrip).then((value) {
+                        Date_AdditionalTrip.clear();
+                        Time_AdditionalTrip.clear();
+                        Type_AdditionalTrip.clear();
+                      });
+                    }),
+              ],
+            );
+          },
         ),
       );
     },
@@ -524,7 +537,7 @@ mySnackBar(
       style: TextStyle(color: textColor),
     ),
     backgroundColor: background,
-    duration: const Duration(seconds: 2),
+    duration: const Duration(seconds: 3),
   ));
 }
 
@@ -566,7 +579,7 @@ Widget MyList_Pre_Trip(context) {
         height: 0.0,
       );
     },
-    itemCount: MyData.FutureTripList.length,
+    itemCount: MyData.PreTripList.length,
   );
 }
 //=====================================================

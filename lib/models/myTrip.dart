@@ -22,7 +22,10 @@ class MyTrip {
   static MyTrip fromDB(ResultRow row) {
     return MyTrip(
       trip: Trip(
-          tripName: row[0], tripType: row[1], tripDate: row[2], price: row[3]),
+          tripName: row[0],
+          tripType: row[1],
+          tripDate: (row[2] as DateTime).toLocal(),
+          price: row[3]),
       driver: Driver(driverName: row[4], driverPhone: row[5]),
       bus: Bus(busNumber: row[6], busType: row[7]),
       reservation: Reservations(reservation_arrive_time: row[8]),

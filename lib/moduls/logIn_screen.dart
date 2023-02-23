@@ -9,6 +9,7 @@ import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../Backend/myData.dart';
 import '../shared/componants.dart';
 import 'mainpage.dart';
 
@@ -65,8 +66,9 @@ class _LogInScreenState extends State<LogInScreen>
                   mySnackBar(state.msg, context, Colors.red, Colors.white);
                 } else if (state is SelectedData) {
                   Navigator.pop(context);
+
                   GoforWard(context, MainPage());
-                  mySnackBar(state.msg, context, Colors.blue, Colors.white);
+                  //   mySnackBar(state.msg, context, Colors.blue, Colors.white);
                 } else if (state is InsertedData) {
                   AppCubit.get(context).controller.index = 1;
                   mySnackBar(state.msg, context, Colors.blue, Colors.white);

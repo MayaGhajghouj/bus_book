@@ -27,7 +27,6 @@ class _MainPageState extends State<MainPage>
 
   bool _hasCallSupport = false;
   Future<void>? _launched;
-  String _phone = '0994033360';
 //****************************************
   @override
   void initState() {
@@ -40,10 +39,12 @@ class _MainPageState extends State<MainPage>
       setState(() {
         _hasCallSupport = result;
       });
+    }).then((value) {
+      DataBase.get(context).getUserTrips(MyData.user!.userId);
+      DataBase.get(context).getManager();
     });
     //=================== initilization =============================================
-    DataBase.get(context).getUserTrips(MyData.user!.userId);
-    DataBase.get(context).getManager();
+
     //=================== initilization =============================================
 
     super.initState();
@@ -80,12 +81,16 @@ class _MainPageState extends State<MainPage>
                 backgroundColor: Colors.transparent,
                 body: BlocConsumer<DataBase, DatabaseStates>(
                   listener: (context, state) {
-                    if (state is ErrorSelectingDataState)
+                    if (state is ErrorSelectingDataState ||
+                        state is ErrorUpdatingDataState ||
+                        state is ErrorInsertingDataState)
                       mySnackBar(
                           state.msg, context, Colors.orange, Colors.black);
-                    else if (state is SelectedData)
+                    else if (state is SelectedData ||
+                        state is UpdatedData ||
+                        state is InsertedData)
                       mySnackBar(
-                          state.msg, context, Colors.green, Colors.black);
+                          state.msg, context, Colors.yellow, Colors.black);
                   },
                   builder: (context, state) {
                     if (state is LoadingState) return myLoading();
@@ -175,7 +180,9 @@ class _MainPageState extends State<MainPage>
                                                   ? () => setState(() {
                                                         _launched =
                                                             _makePhoneCall(
-                                                                _phone);
+                                                                MyData
+                                                                    .mymanager!
+                                                                    .phone);
                                                       })
                                                   : null,
                                               child: _hasCallSupport
@@ -208,8 +215,8 @@ class _MainPageState extends State<MainPage>
                   selectedItemColor: mycolor.blue,
                   currentIndex: MyAppcubit.selectedBottomIndex,
                   onTap: (p0) {
-                    MyAppcubit.changebottomnavbarScreen(p0);
-                    if (MyAppcubit.selectedBottomIndex == 0)
+                    // MyAppcubit.changebottomnavbarScreen(p0);
+                    if (p0 == 0)
                       GoforWard(
                         context,
                         WeekTable(),

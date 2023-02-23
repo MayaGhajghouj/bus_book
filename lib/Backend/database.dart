@@ -96,19 +96,20 @@ class DataBase extends Cubit<DatabaseStates> {
 //==================================================================================
   Future<void> getUserTrips(int? user_id) async {
     emit(LoadingState());
+    // await Future.delayed(Duration(seconds: 5));
     await _myDB!.query('''
        select t.trip_name,t.trip_type,t.trip_date,t.trip_price,
       d.driver_name,d.driver_phone,
       b.bus_number,b.bus_type,
       r.reservation_arrive_time,
       u.user_name
-      from bus_app_db.trip t,bus_app_db.driver d , bus_app_db.bus b, bus_app_db.reservation r ,bus_app_db.user u
+      from trip t,driver d ,bus b,reservation r ,user u
       where
        t.trip_driver_id=d.driver_id 
        and t.trip_bus_id=b.bus_id
        and r.reservatin_trip_id=t.trip_id
        and r.resrervation_user_id= u.user_id
-       and u.user_id=(?)
+       and u.user_id=(?);
        ''', [user_id]).then((value) {
       // raw : trip_name, trip_type, trip_date, trip_price, driver_name, driver_phone, bus_number, bus_type, reservation_arrive_time, user_name
       MyData.FutureTripList.clear();
@@ -152,6 +153,7 @@ class DataBase extends Cubit<DatabaseStates> {
   //===========================================================
   Future<void> getManager() async {
     emit(LoadingState());
+    //await Future.delayed(Duration(seconds: 5));
     await _myDB!.query('select * from manager').then((value) {
       MyData.mymanager = Manager.fromDB(value.last);
       emit(SelectedData("تم جلب بيانات المدير"));
