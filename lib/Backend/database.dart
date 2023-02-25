@@ -179,10 +179,11 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
-  //================Add additional trip=====================================
-  Future<void> insertTrip(TempReservations trip) async {
+  //================Add  trip=====================================
+  Future<void> insertTrip({required List<TempReservations> trip}) async {
     emit(LoadingState());
-    await _myDB!.query('''
+    if (trip.first.type == 1) {
+      await _myDB!.query('''
     INSERT INTO temp_reservation
     (
     temp_reservation_user_id,
@@ -191,15 +192,27 @@ class DataBase extends Cubit<DatabaseStates> {
     temp_reservation_type)
     VALUES(?,?,?,?);
     ''', [
-      trip.userId,
-      trip.TripType!,
-      trip.date!.toUtc(),
-      trip.type,
-    ]).then((value) {
-      emit(InsertedData("تم اضافة بيانات الرحلة الاضافية "));
-    }).catchError((error, stackTrace) {
-      emit(ErrorInsertingDataState('[insertTrip] $error'));
-      print("خطأ في تابع ادراج رحلة اضافية :($error) \n $stackTrace");
-    });
+        trip.first.userId,
+        trip.first.TripType!,
+        trip.first.date!.toUtc(),
+        trip.first.type,
+      ]).then((value) {
+        emit(InsertedData("تم اضافة بيانات الرحلة الاضافية "));
+      }).catchError((error, stackTrace) {
+        emit(ErrorInsertingDataState('[insertTrip] $error'));
+        print("خطأ في تابع ادراج رحلة اضافية :($error) \n $stackTrace");
+      });
+    } else {
+      List<List<dynamic>> te = List.empty(growable: true);
+      for (var x in trip) {
+        te.add([x.userId, x.TripType, x.date, x.type]);
+      }
+      await _myDB!.queryMulti('''INSERT INTO temp_reservation(
+    temp_reservation_user_id,
+    temp_reservation_trip_type,
+    temp_reservation_date,
+    temp_reservation_type)
+    VALUES(?,?,?,?);''', te);
+    } // else
   }
 }

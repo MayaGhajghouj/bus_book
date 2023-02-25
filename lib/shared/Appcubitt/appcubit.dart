@@ -53,34 +53,6 @@ class AppCubit extends Cubit<AppStates> {
   ];
 
 //************************************************************************
-  List<SelectedListItem> GoTimesMenue = [
-    SelectedListItem(
-      name: "8:0",
-    ),
-    SelectedListItem(
-      name: "10:0",
-    ),
-    SelectedListItem(
-      name: "12:0",
-    ),
-    SelectedListItem(
-      name: "14:0",
-    ),
-  ];
-  List<SelectedListItem> BackTimesMenue = [
-    SelectedListItem(
-      name: "10:0",
-    ),
-    SelectedListItem(
-      name: "12:0",
-    ),
-    SelectedListItem(
-      name: "14:0",
-    ),
-    SelectedListItem(
-      name: "16:0",
-    ),
-  ];
   TextEditingController Type_AdditionalTrip = TextEditingController();
   TextEditingController Date_AdditionalTrip = TextEditingController();
   TextEditingController Time_AdditionalTrip = TextEditingController();
@@ -129,9 +101,9 @@ class AppCubit extends Cubit<AppStates> {
   //***************************** BottomNavigationBar ***************************************************** */
   int selectedBottomIndex = 0;
 
-  void changebottomnavbarScreen(int index) {
-    selectedBottomIndex = index;
-  }
+  // void changebottomnavbarScreen(int index) {
+  //   selectedBottomIndex = index;
+  // }
 
   List<DotNavigationBarItem> NavBarItems = [
     DotNavigationBarItem(

@@ -216,12 +216,13 @@ class _MainPageState extends State<MainPage>
                   currentIndex: MyAppcubit.selectedBottomIndex,
                   onTap: (p0) {
                     // MyAppcubit.changebottomnavbarScreen(p0);
-                    if (p0 == 0)
+                    if (p0 == 0) {
+                      DataBase.get(context).getimes();
                       GoforWard(
                         context,
                         WeekTable(),
                       );
-                    else {
+                    } else {
                       AdditonalTrip(
                         context: context,
                         Type_AdditionalTrip: MyAppcubit.Type_AdditionalTrip,

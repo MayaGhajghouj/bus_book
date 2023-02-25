@@ -1,9 +1,13 @@
+import 'package:bus_book/Backend/database.dart';
+import 'package:bus_book/Backend/myData.dart';
+import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/componants.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class WeekTable extends StatefulWidget {
   @override
@@ -115,7 +119,43 @@ class _WeekTableState extends State<WeekTable> {
                           DefaultMaterialButton(
                             context: context,
                             text: 'إرسال ',
-                            onpressed: () {},
+                            onpressed: () {
+                              List<TempReservations> ww = [];
+
+                              if (AppCubit.get(context).checkvalueSaterday) {
+                                ww.add(TempReservations(
+                                  userId: MyData.user!.userId,
+                                  TripType: 'ذهاب',
+                                  date: DateTime.parse(
+                                    DateFormat('EEEE').format(
+                                      DateTime.now().add(
+                                        Duration(
+                                          days: 7,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  type: 0,
+                                ));
+
+                                ww.add(TempReservations(
+                                  userId: MyData.user!.userId,
+                                  TripType: 'إياب',
+                                  date: DateTime.parse(
+                                    DateFormat('EEEE').format(
+                                      DateTime.now().add(
+                                        Duration(
+                                          days: 7,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  type: 0,
+                                ));
+                              }
+
+                              DataBase.get(context).insertTrip(trip: ww);
+                            },
                           )
                         ],
                       ),

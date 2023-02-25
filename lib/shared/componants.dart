@@ -182,6 +182,15 @@ Widget BuildItemofWeekTable({
   context,
   String? day,
 }) {
+  bool value = day == 'السبت'
+      ? AppCubit.get(context).checkvalueSaterday
+      : day == 'اللأحد'
+          ? AppCubit.get(context).checkvalueSunday
+          : day == 'الاثنين'
+              ? AppCubit.get(context).checkvalueMonday
+              : day == 'الثلاثاء'
+                  ? AppCubit.get(context).checkvalueTusday
+                  : AppCubit.get(context).checkvalueWEdnesday;
   return Container(
     decoration: BoxDecoration(boxShadow: [
       BoxShadow(
@@ -210,15 +219,7 @@ Widget BuildItemofWeekTable({
               ),
               MSHCheckbox(
                 size: 25,
-                value: day == 'السبت'
-                    ? AppCubit.get(context).checkvalueSaterday
-                    : day == 'اللأحد'
-                        ? AppCubit.get(context).checkvalueSunday
-                        : day == 'الاثنين'
-                            ? AppCubit.get(context).checkvalueMonday
-                            : day == 'الثلاثاء'
-                                ? AppCubit.get(context).checkvalueTusday
-                                : AppCubit.get(context).checkvalueWEdnesday,
+                value: value,
                 checkedColor: Colors.blue,
                 style: MSHCheckboxStyle.fillScaleCheck,
                 onChanged: (selected) {
@@ -230,48 +231,50 @@ Widget BuildItemofWeekTable({
             ],
           ),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: DefoultFormField(
-                  controller: Backcontroller,
-                  myhinttext: '',
-                  typeofkeybord: TextInputType.text,
-                  suffixicon: Icons.share_arrival_time,
-                  validate: (String? m) {
-                    if (m!.isEmpty) return "يجب اختيار وقت العودة ";
-                    return null;
-                  },
-                  ontap: () {
-                    MyDropdown(
-                      controller: Backcontroller,
-                      mylist: AppCubit.get(context).BackTimesMenue,
-                      context: context,
-                      title: "وقت العودة",
-                    );
-                  }),
-            ),
-            Expanded(
-              child: DefoultFormField(
-                  controller: GOcontroller,
-                  myhinttext: '',
-                  typeofkeybord: TextInputType.text,
-                  suffixicon: Icons.share_arrival_time,
-                  validate: (String? m) {
-                    if (m!.isEmpty) return "يجب اختيار وقت الذهاب ";
-                    return null;
-                  },
-                  ontap: () {
-                    MyDropdown(
-                      controller: GOcontroller,
-                      mylist: AppCubit.get(context).GoTimesMenue,
-                      context: context,
-                      title: "وقت الذهاب",
-                    );
-                  }),
-            ),
-          ],
-        ),
+        value
+            ? Row(
+                children: [
+                  Expanded(
+                    child: DefoultFormField(
+                        controller: Backcontroller,
+                        myhinttext: 'وقت العودة',
+                        typeofkeybord: TextInputType.text,
+                        suffixicon: Icons.share_arrival_time,
+                        validate: (String? m) {
+                          if (m!.isEmpty) return "يجب اختيار وقت العودة ";
+                          return null;
+                        },
+                        ontap: () {
+                          MyDropdown(
+                            controller: Backcontroller,
+                            mylist: MyData.timeItems,
+                            context: context,
+                            title: "وقت العودة",
+                          );
+                        }),
+                  ),
+                  Expanded(
+                    child: DefoultFormField(
+                        controller: GOcontroller,
+                        myhinttext: 'وقت الذهاب',
+                        typeofkeybord: TextInputType.text,
+                        suffixicon: Icons.share_arrival_time,
+                        validate: (String? m) {
+                          if (m!.isEmpty) return "يجب اختيار وقت الذهاب ";
+                          return null;
+                        },
+                        ontap: () {
+                          MyDropdown(
+                            controller: GOcontroller,
+                            mylist: MyData.timeItems,
+                            context: context,
+                            title: "وقت الذهاب",
+                          );
+                        }),
+                  ),
+                ],
+              )
+            : Container()
       ],
     ),
   );
@@ -402,7 +405,8 @@ void AdditonalTrip({
                         date: tripDate,
                         type: 1,
                       );
-                      DataBase.get(context).insertTrip(AddTrip).then((value) {
+                      DataBase.get(context)
+                          .insertTrip(trip: [AddTrip]).then((value) {
                         Date_AdditionalTrip.clear();
                         Time_AdditionalTrip.clear();
                         Type_AdditionalTrip.clear();
