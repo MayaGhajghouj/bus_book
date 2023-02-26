@@ -179,7 +179,7 @@ class DataBase extends Cubit<DatabaseStates> {
     });
   }
 
-  //================Add  trip=====================================
+  //================ Add  trip =====================================
   Future<void> insertTrip({required List<TempReservations> trip}) async {
     emit(LoadingState());
     if (trip.first.type == 1) {
@@ -216,3 +216,19 @@ class DataBase extends Cubit<DatabaseStates> {
     } // else
   }
 }
+//==========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -86,7 +86,7 @@ class AppCubit extends Cubit<AppStates> {
   void ChangeMyCheckValueInWeekTable(bool selescted, String day) {
     if (day == 'السبت')
       checkvalueSaterday = selescted;
-    else if (day == 'اللأحد')
+    else if (day == 'الأحد')
       checkvalueSunday = selescted;
     else if (day == 'الاثنين')
       checkvalueMonday = selescted;

@@ -180,11 +180,12 @@ Widget BuildItemofWeekTable({
   required TextEditingController GOcontroller,
   required TextEditingController Backcontroller,
   context,
-  String? day,
+  required String? day,
+  required DateTime? date,
 }) {
   bool value = day == 'السبت'
       ? AppCubit.get(context).checkvalueSaterday
-      : day == 'اللأحد'
+      : day == 'الأحد'
           ? AppCubit.get(context).checkvalueSunday
           : day == 'الاثنين'
               ? AppCubit.get(context).checkvalueMonday
@@ -208,6 +209,15 @@ Widget BuildItemofWeekTable({
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              Text(
+                date.toString().substring(0, 10),
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
               Text(
                 day!,
                 style: TextStyle(
