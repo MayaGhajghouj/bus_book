@@ -8,9 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mysql1/mysql1.dart';
 import '../models/manager.dart';
 import '../models/user.dart';
+import '../models/weekDayData.dart';
 
 class DataBase extends Cubit<DatabaseStates> {
   DataBase() : super(InitialState());
+
   static DataBase get(context) => BlocProvider.of(context);
 
   MySqlConnection? _myDB;
@@ -46,19 +48,11 @@ class DataBase extends Cubit<DatabaseStates> {
     emit(LoadingState());
     await _myDB!.query(
         'insert into user (user_name,user_phone,user_address,user_email,user_password) values ( ?, ?,?,?,?);',
-        [
-          u.userName,
-          u.userPhone,
-          u.userAddress,
-          u.userEmail,
-          u.userPassword
-        ]).then((value) {
-      emit(
-          InsertedData(" يرجى تسجيل الدخول ، تم اضافة بيانات المستخدم الجديد"));
+        [u.userName, u.userPhone, u.userAddress, u.userEmail, u.userPassword]).then((value) {
+      emit(InsertedData(" يرجى تسجيل الدخول ، تم اضافة بيانات المستخدم الجديد"));
     }).catchError((error, stackTrace) {
       if (error.toString().contains('Duplicate entry'))
-        emit(ErrorInsertingDataState(
-            'هذا حساب مكرر .. يرجى استخدام ايميل جديد '));
+        emit(ErrorInsertingDataState('هذا حساب مكرر .. يرجى استخدام ايميل جديد '));
       else {
         print(
             "=========================inside USER SIGN UP ERROR FUNCTION ====>>($error) \n $stackTrace");
@@ -66,14 +60,15 @@ class DataBase extends Cubit<DatabaseStates> {
       }
     });
   }
+
   //================= user login ==========================================
 
   Future<void> UserLogin(String email, String password, context) async {
     emit(LoadingState());
 //select * from bus_app_db.user where user_email ='maya@gmail.com' && user_password='12345'
-    await _myDB!.query(
-        'select * from user where (user_email,user_password)=(?,?)',
-        [email, password]).then((value) {
+    await _myDB!
+        .query('select * from user where (user_email,user_password)=(?,?)', [email, password]).then(
+            (value) {
       if (value.isNotEmpty) {
         for (var row in value) {
           MyData.user = User.fromDB(row);
@@ -215,20 +210,98 @@ class DataBase extends Cubit<DatabaseStates> {
     VALUES(?,?,?,?);''', te);
     } // else
   }
+
+  //***************************************************************************
+
+  Future<void> getTempReservation() async {
+    await getimes();
+    emit(LoadingState());
+    MyData.week.clear();
+    for (int i = 1; i <= 7; i++) {
+      DateTime d = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .add(Duration(days: i));
+      if (d.weekday != 4 && d.weekday != 5) {
+        MyData.week[d.weekday] = WeekDayData()..dateTime = d;
+      }
+    }
+    await _myDB!.query('''
+        select * from temp_reservation where temp_reservation_user_id=? and temp_reservation_type=0 ;
+    ''', [MyData.user!.userId]).then((value) {
+      for (var row in value) {
+        TempReservations x = TempReservations.fromDB(row);
+        if (x.TripType == 'ذهاب') {
+          MyData.week[x.date!.weekday]!.goTime.text = '${x.date!.hour}:${x.date!.minute}';
+          MyData.week[x.date!.weekday]!.goID = x.id;
+        } else {
+          MyData.week[x.date!.weekday]!.backTime.text = '${x.date!.hour}:${x.date!.minute}';
+          MyData.week[x.date!.weekday]!.backID = x.id;
+        }
+        MyData.week[x.date!.weekday]!.selected = true;
+        MyData.week[x.date!.weekday]!.founded = true;
+      }
+
+      emit(SelectedData('Done'));
+    }).catchError((error) {
+      emit(ErrorSelectingDataState('خطأ في جلب الحجوزات حاول مجددا '));
+      print("maya getReservation :($error) \n ");
+    });
+  }
+
+  //***************************************************************************
+  Future<void> insertReservation() async {
+    emit(LoadingState());
+    await _myDB!.transaction((p0) async {
+      for (var x in MyData.week.values) {
+        if (x.selected) {
+          var temp = x.goTime.text.split(':');
+          Duration goTime = Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+          temp = x.backTime.text.split(':');
+          Duration backTime = Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+          if (x.founded) {
+            p0.query('''
+             UPDATE temp_reservation
+              SET
+              temp_reservation_date = ?
+              WHERE temp_reservation_id = ?;
+            ''', [x.dateTime!.add(goTime).toUtc(), x.goID]);
+            p0.query('''
+             UPDATE temp_reservation
+              SET
+              temp_reservation_date = ?
+              WHERE temp_reservation_id = ?;
+            ''', [x.dateTime!.add(backTime).toUtc(), x.backID]);
+          } else {
+            p0.query('''
+              INSERT INTO temp_reservation
+              (
+              temp_reservation_user_id,
+              temp_reservation_trip_type,
+              temp_reservation_date,
+              temp_reservation_type)
+              VALUES(?,?,?,?);
+          ''', [MyData.user!.userId, 'ذهاب', x.dateTime!.add(goTime).toUtc(), 0]);
+            p0.query('''
+              INSERT INTO temp_reservation
+              (
+              temp_reservation_user_id,
+              temp_reservation_trip_type,
+              temp_reservation_date,
+              temp_reservation_type)
+              VALUES(?,?,?,?);
+          ''', [MyData.user!.userId, 'اياب', x.dateTime!.add(backTime).toUtc(), 0]);
+          }
+        } else {
+          if (x.founded) {
+            p0.query(''' DELETE FROM temp_reservation
+                WHERE temp_reservation_id=? ''', [x.goID]);
+            p0.query(''' DELETE FROM temp_reservation
+                WHERE temp_reservation_id=? ''', [x.backID]);
+          }
+        }
+      }
+    }).then((value) {
+      emit(InsertedData('تم حفظ الجدول الاسبوعي'));
+    });
+  }
 }
 //==========================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

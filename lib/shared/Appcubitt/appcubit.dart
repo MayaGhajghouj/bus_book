@@ -1,11 +1,14 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, non_constant_identifier_names
 
+import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../models/weekDayData.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialAppState());
@@ -61,7 +64,7 @@ class AppCubit extends Cubit<AppStates> {
       name: "ذهاب",
     ),
     SelectedListItem(
-      name: "إياب",
+      name: "اياب",
     ),
   ];
 
@@ -83,18 +86,8 @@ class AppCubit extends Cubit<AppStates> {
   bool checkvalueTusday = false;
   bool checkvalueWEdnesday = false;
 
-  void ChangeMyCheckValueInWeekTable(bool selescted, String day) {
-    if (day == 'السبت')
-      checkvalueSaterday = selescted;
-    else if (day == 'الأحد')
-      checkvalueSunday = selescted;
-    else if (day == 'الاثنين')
-      checkvalueMonday = selescted;
-    else if (day == 'الثلاثاء')
-      checkvalueTusday = selescted;
-    else
-      checkvalueWEdnesday = selescted;
-
+  void ChangeMyCheckValueInWeekTable(bool selescted, int index) {
+    MyData.week[index]!.selected = selescted;
     emit(ChangeSelectedDayInWeekTable());
   }
 

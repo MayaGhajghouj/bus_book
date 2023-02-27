@@ -3,6 +3,7 @@
 import 'package:bus_book/Backend/database.dart';
 import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
+import 'package:bus_book/DateTimeExtension.dart';
 import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
 
 import '../models/myTrip.dart';
+import '../models/weekDayData.dart';
 
 Widget DefoultFormField({
   required TextEditingController controller,
@@ -166,8 +168,7 @@ myvalues(String k, String v) {
         ),
         Text(
           ' : $k',
-          style: TextStyle(
-              fontSize: 19, color: mycolor.blue, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 19, color: mycolor.blue, fontWeight: FontWeight.bold),
         ),
       ],
     ),
@@ -177,21 +178,10 @@ myvalues(String k, String v) {
 //******************BuildItemofWeekTable***********************************
 
 Widget BuildItemofWeekTable({
-  required TextEditingController GOcontroller,
-  required TextEditingController Backcontroller,
-  context,
-  required String? day,
-  required DateTime? date,
+  required index,
+  required context,
 }) {
-  bool value = day == 'السبت'
-      ? AppCubit.get(context).checkvalueSaterday
-      : day == 'الأحد'
-          ? AppCubit.get(context).checkvalueSunday
-          : day == 'الاثنين'
-              ? AppCubit.get(context).checkvalueMonday
-              : day == 'الثلاثاء'
-                  ? AppCubit.get(context).checkvalueTusday
-                  : AppCubit.get(context).checkvalueWEdnesday;
+  AppCubit MyAppcubit = AppCubit.get(context);
   return Container(
     decoration: BoxDecoration(boxShadow: [
       BoxShadow(
@@ -210,7 +200,7 @@ Widget BuildItemofWeekTable({
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                date.toString().substring(0, 10),
+                MyData.week[index]!.dateTime!.myFormat,
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -219,7 +209,7 @@ Widget BuildItemofWeekTable({
                 width: 10.0,
               ),
               Text(
-                day!,
+                MyData.week[index]!.dateTime!.weekDayString,
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -229,34 +219,44 @@ Widget BuildItemofWeekTable({
               ),
               MSHCheckbox(
                 size: 25,
-                value: value,
+                value: MyData.week[index]!.selected,
                 checkedColor: Colors.blue,
                 style: MSHCheckboxStyle.fillScaleCheck,
                 onChanged: (selected) {
-                  AppCubit.get(context)
-                      .ChangeMyCheckValueInWeekTable(selected, day);
+                  AppCubit.get(context).ChangeMyCheckValueInWeekTable(selected, index);
                 },
                 uncheckedColor: mycolor.lightblack,
               ),
             ],
           ),
         ),
-        value
+        MyData.week[index]!.selected
             ? Row(
                 children: [
                   Expanded(
                     child: DefoultFormField(
-                        controller: Backcontroller,
+                        controller: MyData.week[index]!.backTime,
                         myhinttext: 'وقت العودة',
                         typeofkeybord: TextInputType.text,
                         suffixicon: Icons.share_arrival_time,
                         validate: (String? m) {
-                          if (m!.isEmpty) return "يجب اختيار وقت العودة ";
+                          if (m!.isEmpty && MyData.week[index]!.selected) {
+                            return "يجب اختيار وقت العودة ";
+                          }
+                          var temp = MyData.week[index]!.goTime.text.split(':');
+                          Duration goTime =
+                              Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+                          temp = MyData.week[index]!.backTime.text.split(':');
+                          Duration backTime =
+                              Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+                          if (backTime.compareTo(goTime) <= 0) {
+                            return 'يجب ان يكون وقت العودة متأخر';
+                          }
                           return null;
                         },
                         ontap: () {
                           MyDropdown(
-                            controller: Backcontroller,
+                            controller: MyData.week[index]!.backTime,
                             mylist: MyData.timeItems,
                             context: context,
                             title: "وقت العودة",
@@ -265,17 +265,28 @@ Widget BuildItemofWeekTable({
                   ),
                   Expanded(
                     child: DefoultFormField(
-                        controller: GOcontroller,
+                        controller: MyData.week[index]!.goTime,
                         myhinttext: 'وقت الذهاب',
                         typeofkeybord: TextInputType.text,
                         suffixicon: Icons.share_arrival_time,
                         validate: (String? m) {
-                          if (m!.isEmpty) return "يجب اختيار وقت الذهاب ";
+                          if (m!.isEmpty && MyData.week[index]!.selected) {
+                            return "يجب اختيار وقت الذهاب ";
+                          }
+                          var temp = MyData.week[index]!.goTime.text.split(':');
+                          Duration goTime =
+                              Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+                          temp = MyData.week[index]!.backTime.text.split(':');
+                          Duration backTime =
+                              Duration(hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+                          if (backTime.compareTo(goTime) <= 0) {
+                            return 'يجب ان يكون وقت الذهاب مبكر';
+                          }
                           return null;
                         },
                         ontap: () {
                           MyDropdown(
-                            controller: GOcontroller,
+                            controller: MyData.week[index]!.goTime,
                             mylist: MyData.timeItems,
                             context: context,
                             title: "وقت الذهاب",
@@ -311,11 +322,12 @@ void AdditonalTrip({
             }
           },
           builder: (context, state) {
-            if (state is LoadingState)
+            if (state is LoadingState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [myLoading()],
               );
+            }
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -374,12 +386,10 @@ void AdditonalTrip({
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime.now(),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 6)))
+                              lastDate: DateTime.now().add(const Duration(days: 6)))
                           .then((value) {
                         if (value != null) {
-                          Date_AdditionalTrip.text =
-                              value.toString().substring(0, 10);
+                          Date_AdditionalTrip.text = value.toString().substring(0, 10);
                         }
                       });
                     }),
@@ -404,19 +414,15 @@ void AdditonalTrip({
                     mytext: 'إرسال',
                     pressthisbutton: () {
                       var time = Time_AdditionalTrip.text.split(':');
-                      Duration x = Duration(
-                          hours: int.parse(time[0]),
-                          minutes: int.parse(time[1]));
-                      var tripDate =
-                          DateTime.parse(Date_AdditionalTrip.text).add(x);
+                      Duration x = Duration(hours: int.parse(time[0]), minutes: int.parse(time[1]));
+                      var tripDate = DateTime.parse(Date_AdditionalTrip.text).add(x);
                       TempReservations AddTrip = new TempReservations(
                         userId: MyData.user!.userId,
                         TripType: Type_AdditionalTrip.text,
                         date: tripDate,
                         type: 1,
                       );
-                      DataBase.get(context)
-                          .insertTrip(trip: [AddTrip]).then((value) {
+                      DataBase.get(context).insertTrip(trip: [AddTrip]).then((value) {
                         Date_AdditionalTrip.clear();
                         Time_AdditionalTrip.clear();
                         Type_AdditionalTrip.clear();
@@ -480,10 +486,7 @@ Widget DefaultMaterialButton({
         text!,
         textAlign: TextAlign.center,
         textDirection: TextDirection.rtl,
-        style: TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-            color: mycolor.lightwight),
+        style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: mycolor.lightwight),
       ),
     ),
   );
@@ -543,8 +546,7 @@ Widget mysizedbox({
 }
 
 //=============================Snakbar=================================
-mySnackBar(
-    String content, BuildContext context, Color background, Color textColor) {
+mySnackBar(String content, BuildContext context, Color background, Color textColor) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       content,
@@ -631,14 +633,10 @@ mycard({
       margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-        myvalues(
-            'موعد الرحلة ', myTrip.trip.tripDate.toString().substring(0, 16)),
+        myvalues('موعد الرحلة ', myTrip.trip.tripDate.toString().substring(0, 16)),
         myvalues('سعر الرحلة', myTrip.trip.price.toString()),
-        myvalues(
-            'وقت وصول الباص',
-            myTrip.reservation.reservation_arrive_time
-                .toString()
-                .substring(0, 5)),
+        myvalues('وقت وصول الباص',
+            myTrip.reservation.reservation_arrive_time.toString().substring(0, 5)),
         myvalues('نوع الرحلة', myTrip.trip.tripType),
       ]),
     ),
@@ -729,6 +727,3 @@ void MyDropdown({
   ).showModal(context);
 }
 //************************************************************************* */
-
-
-
