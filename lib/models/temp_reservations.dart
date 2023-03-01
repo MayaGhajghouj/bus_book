@@ -1,3 +1,5 @@
+import 'package:mysql1/mysql1.dart';
+
 class TempReservations {
   int? id, userId, type;
   String? TripType;
@@ -8,4 +10,14 @@ class TempReservations {
       required this.TripType,
       required this.date,
       required this.type});
+
+  static TempReservations fromDB(ResultRow row) {
+    return TempReservations(
+      id: row[0],
+      userId: row[1],
+      TripType: row[2],
+      date: (row[3] as DateTime).toLocal(),
+      type: row[4],
+    );
+  }
 }

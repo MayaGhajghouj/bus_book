@@ -2,6 +2,7 @@ import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/models/myTrip.dart';
 import 'package:bus_book/models/temp_reservations.dart';
+import 'package:bus_book/models/weekdaydata.dart';
 import 'package:bus_book/shared/Constants/connectionDB.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -212,23 +213,128 @@ class DataBase extends Cubit<DatabaseStates> {
     temp_reservation_trip_type,
     temp_reservation_date,
     temp_reservation_type)
-    VALUES(?,?,?,?);''', te);
+    VALUES(?,?,?,?);''', te).then((value) {
+        emit(InsertedData('تم ادراج الرحلة الاسبوعية '));
+      }).catchError((err) {
+        emit(ErrorInsertingDataState('خطأ في ادراج الرحلة الاسبوعية'));
+      });
     } // else
   }
+
+//==== Get temp Reservations (weektable of student) in screen ===================
+  Future<void> GetTempReservation() async {
+    await getimes();
+    emit(LoadingState());
+    for (int i = 1; i <= 7; i++) {
+      DateTime d = DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          .add(
+        Duration(
+          days: i,
+        ),
+      );
+      if (d.weekday != 4 && d.weekday != 5)
+        MyData.weekdata[d.weekday] = WeekDayData()..dateTime = d;
+    }
+    await _myDB!.query(
+        'select * from temp_reservation where temp_reservation_user_id=? and temp_reservation_type=0',
+        [MyData.user!.userId]).then((value) {
+      for (var row in value) {
+        print(row);
+        TempReservations x = TempReservations.fromDB(row);
+        if (x.TripType == 'ذهاب') {
+          MyData.weekdata[x.date!.weekday]!.gotime.text =
+              '${x.date!.hour}:${x.date!.minute}';
+          MyData.weekdata[x.date!.weekday]!.gotimeid = x.id;
+        } else {
+          MyData.weekdata[x.date!.weekday]!.backtime.text =
+              '${x.date!.hour}:${x.date!.minute}';
+          MyData.weekdata[x.date!.weekday]!.backtmeid = x.id;
+        }
+        MyData.weekdata[x.date!.weekday]!.Selected = true;
+        MyData.weekdata[x.date!.weekday]!.founded = true;
+      }
+      emit(SelectedData('تم عرض الجدول الاسبوعي'));
+    }).catchError((err, StackTrace) {
+      emit(ErrorSelectingDataState('خطأ في جلب بيانات الجدول الأسبوعي'));
+      print('error in weektable function ==>> $err $StackTrace');
+    });
+  }
+
+//================= insert edit delete the table of student ================
+
+  Future<void> InsertWeekTable() async {
+    emit(LoadingState());
+    await _myDB!.transaction(
+      (p0) async {
+        for (var x in MyData.weekdata.values) {
+          if (x.Selected) {
+            var temp = x.gotime.text.split(':');
+            Duration gotime = Duration(
+                hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+            temp = x.backtime.text.split(':');
+            Duration backtime = Duration(
+                hours: int.parse(temp[0]), minutes: int.parse(temp[1]));
+            if (x.founded) {
+              // update
+              p0.query('''
+             UPDATE temp_reservation
+              SET
+              temp_reservation_date = ?
+              WHERE temp_reservation_id = ?;
+            ''', [x.dateTime!.add(gotime).toUtc(), x.gotimeid]);
+              p0.query('''
+             UPDATE temp_reservation
+              SET
+              temp_reservation_date = ?
+              WHERE temp_reservation_id = ?;
+            ''', [x.dateTime!.add(backtime).toUtc(), x.backtmeid]);
+            } else {
+              // insert
+              p0.query('''
+              INSERT INTO temp_reservation
+              (
+              temp_reservation_user_id,
+              temp_reservation_trip_type,
+              temp_reservation_date,
+              temp_reservation_type)
+              VALUES(?,?,?,?);
+          ''', [
+                MyData.user!.userId,
+                'ذهاب',
+                x.dateTime!.add(gotime).toUtc(),
+                0
+              ]);
+              p0.query('''
+              INSERT INTO temp_reservation
+              (
+              temp_reservation_user_id,
+              temp_reservation_trip_type,
+              temp_reservation_date,
+              temp_reservation_type)
+              VALUES(?,?,?,?);
+          ''', [
+                MyData.user!.userId,
+                'اياب',
+                x.dateTime!.add(backtime).toUtc(),
+                0
+              ]);
+            }
+          } else {
+            if (x.founded) {
+              // delete
+              p0.query(''' DELETE FROM temp_reservation
+                WHERE temp_reservation_id=? ''', [x.gotimeid]);
+              p0.query(''' DELETE FROM temp_reservation
+                WHERE temp_reservation_id=? ''', [x.backtmeid]);
+            }
+          }
+        }
+      },
+    ).then((value) {
+      emit(InsertedData('تم إنشاء الجدول الأسبوعي'));
+    }).catchError((err) {
+      print('حصل خطأ في تابع الترانزيكشن==>> $err ');
+    });
+  }
 }
-//==========================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

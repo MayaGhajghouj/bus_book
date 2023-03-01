@@ -9,6 +9,7 @@ import 'package:bus_book/shared/Appcubitt/appstates.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import '../Backend/myData.dart';
 import '../shared/componants.dart';
 import 'mainpage.dart';
@@ -31,6 +32,12 @@ class _LogInScreenState extends State<LogInScreen>
     print(
         '=================================== initilization ========================================================');
     super.initState();
+    stopSplash();
+  }
+
+  stopSplash() async {
+    await Future.delayed(Duration(seconds: 3));
+    FlutterNativeSplash.remove();
   }
 
   //**************************************************************

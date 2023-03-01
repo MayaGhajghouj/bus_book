@@ -5,10 +5,10 @@ import 'package:bus_book/Backend/db_states.dart';
 import 'package:bus_book/Backend/myData.dart';
 import 'package:bus_book/models/temp_reservations.dart';
 import 'package:bus_book/shared/Appcubitt/appcubit.dart';
+import 'package:bus_book/shared/Constants/datetimeextention.dart';
 import 'package:bus_book/shared/Constants/mycolors.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
-import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:msh_checkbox/msh_checkbox.dart';
@@ -102,56 +102,6 @@ Widget DefoultFormField({
 }
 
 //====================================================================================
-
-Widget myStandardScreen(context) {
-  return Container(
-    decoration: BoxDecoration(
-        gradient: LinearGradient(
-      colors: [
-        mycolor.blue,
-        mycolor.yello,
-      ],
-    )),
-    child: SafeArea(
-      bottom: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.541),
-                  blurRadius: 15,
-                ),
-              ], borderRadius: BorderRadius.circular(50), color: Colors.white),
-              margin: EdgeInsets.all(15),
-              height: 0.07 * MediaQuery.of(context).size.height,
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.zoom_in_rounded,
-                    ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.account_circle_outlined,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-//************************************************************** */
 myvalues(String k, String v) {
   return Padding(
     padding: EdgeInsets.only(right: 10.0, top: 5.0, bottom: 5.0),
@@ -177,21 +127,10 @@ myvalues(String k, String v) {
 //******************BuildItemofWeekTable***********************************
 
 Widget BuildItemofWeekTable({
-  required TextEditingController GOcontroller,
-  required TextEditingController Backcontroller,
+  required int index,
   context,
-  required String? day,
-  required DateTime? date,
 }) {
-  bool value = day == 'السبت'
-      ? AppCubit.get(context).checkvalueSaterday
-      : day == 'الأحد'
-          ? AppCubit.get(context).checkvalueSunday
-          : day == 'الاثنين'
-              ? AppCubit.get(context).checkvalueMonday
-              : day == 'الثلاثاء'
-                  ? AppCubit.get(context).checkvalueTusday
-                  : AppCubit.get(context).checkvalueWEdnesday;
+  AppCubit mycubit = AppCubit.get(context);
   return Container(
     decoration: BoxDecoration(boxShadow: [
       BoxShadow(
@@ -210,7 +149,7 @@ Widget BuildItemofWeekTable({
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                date.toString().substring(0, 10),
+                MyData.weekdata[index]!.dateTime!.myFormate,
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -219,7 +158,7 @@ Widget BuildItemofWeekTable({
                 width: 10.0,
               ),
               Text(
-                day!,
+                MyData.weekdata[index]!.dateTime!.weekDaystring,
                 style: TextStyle(
                   fontSize: 20.0,
                 ),
@@ -229,34 +168,46 @@ Widget BuildItemofWeekTable({
               ),
               MSHCheckbox(
                 size: 25,
-                value: value,
+                value: MyData.weekdata[index]!.Selected,
                 checkedColor: Colors.blue,
                 style: MSHCheckboxStyle.fillScaleCheck,
                 onChanged: (selected) {
-                  AppCubit.get(context)
-                      .ChangeMyCheckValueInWeekTable(selected, day);
+                  mycubit.ChangeMyCheckValueInWeekTable(selected, index);
                 },
                 uncheckedColor: mycolor.lightblack,
               ),
             ],
           ),
         ),
-        value
+        MyData.weekdata[index]!.Selected
             ? Row(
                 children: [
                   Expanded(
                     child: DefoultFormField(
-                        controller: Backcontroller,
+                        controller: MyData.weekdata[index]!.backtime,
                         myhinttext: 'وقت العودة',
                         typeofkeybord: TextInputType.text,
                         suffixicon: Icons.share_arrival_time,
                         validate: (String? m) {
                           if (m!.isEmpty) return "يجب اختيار وقت العودة ";
+                          var temp =
+                              MyData.weekdata[index]!.backtime.text.split(':');
+                          Duration backtime = Duration(
+                              hours: int.parse(temp[0]),
+                              minutes: int.parse(temp[1]));
+                          temp = MyData.weekdata[index]!.gotime.text.split(':');
+                          Duration gotime = Duration(
+                              hours: int.parse(temp[0]),
+                              minutes: int.parse(temp[1]));
+
+                          if (backtime <= gotime)
+                            return " يجب اختيار وقت العودة متأخرا ";
+
                           return null;
                         },
                         ontap: () {
                           MyDropdown(
-                            controller: Backcontroller,
+                            controller: MyData.weekdata[index]!.backtime,
                             mylist: MyData.timeItems,
                             context: context,
                             title: "وقت العودة",
@@ -265,17 +216,29 @@ Widget BuildItemofWeekTable({
                   ),
                   Expanded(
                     child: DefoultFormField(
-                        controller: GOcontroller,
+                        controller: MyData.weekdata[index]!.gotime,
                         myhinttext: 'وقت الذهاب',
                         typeofkeybord: TextInputType.text,
                         suffixicon: Icons.share_arrival_time,
                         validate: (String? m) {
                           if (m!.isEmpty) return "يجب اختيار وقت الذهاب ";
+                          var temp =
+                              MyData.weekdata[index]!.backtime.text.split(':');
+                          Duration backtime = Duration(
+                              hours: int.parse(temp[0]),
+                              minutes: int.parse(temp[1]));
+                          temp = MyData.weekdata[index]!.gotime.text.split(':');
+                          Duration gotime = Duration(
+                              hours: int.parse(temp[0]),
+                              minutes: int.parse(temp[1]));
+
+                          if (gotime >= backtime)
+                            return " يجب اختيار وقت الذهاب مبكرا ";
                           return null;
                         },
                         ontap: () {
                           MyDropdown(
-                            controller: GOcontroller,
+                            controller: MyData.weekdata[index]!.gotime,
                             mylist: MyData.timeItems,
                             context: context,
                             title: "وقت الذهاب",
@@ -300,6 +263,7 @@ void AdditonalTrip({
   showDialog(
     context: context,
     builder: (context) {
+      var formkey = GlobalKey<FormState>();
       return AlertDialog(
         shape: RoundedRectangleBorder(
             side: BorderSide(color: mycolor.blue, width: 5),
@@ -316,113 +280,119 @@ void AdditonalTrip({
                 mainAxisSize: MainAxisSize.min,
                 children: [myLoading()],
               );
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'املأ معلومات الرحلة',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                    color: mycolor.blue,
+            return Form(
+              key: formkey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'املأ معلومات الرحلة',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: mycolor.blue,
+                    ),
                   ),
-                ),
-                DefoultFormField(
-                    readonly: true,
-                    controller: Time_AdditionalTrip,
-                    myhinttext: 'اختر وقت الرحلة',
-                    typeofkeybord: TextInputType.text,
-                    validate: (String? m) {
-                      if (m!.isEmpty) return "يجب اختيار وقت الرحلة ";
-                      return null;
-                    },
-                    ontap: () async {
-                      await DataBase.get(context).getimes();
-                      MyDropdown(
-                        controller: Time_AdditionalTrip,
-                        mylist: MyData.timeItems,
-                        context: context,
-                        title: "اختر وقت الرحلة",
-                      );
-                    }),
-                DefoultFormField(
-                    controller: Date_AdditionalTrip,
-                    myhinttext: 'اختر تاريخ الرحلة',
-                    typeofkeybord: TextInputType.text,
-                    validate: (String? m) {
-                      if (m!.isEmpty) return "يجب اختيار التاريخ  ";
-                      return null;
-                    },
-                    readonly: true,
-                    ontap: () {
-                      showDatePicker(
-                              builder: (context, child) {
-                                return Theme(
-                                  data: Theme.of(context).copyWith(
-                                    colorScheme: ColorScheme.light(
-                                      primary: mycolor.blue,
-                                    ),
-                                    textButtonTheme: TextButtonThemeData(
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: mycolor.blue,
+                  DefoultFormField(
+                      readonly: true,
+                      controller: Time_AdditionalTrip,
+                      myhinttext: 'اختر وقت الرحلة',
+                      typeofkeybord: TextInputType.text,
+                      validate: (String? m) {
+                        if (m!.isEmpty) return "يجب اختيار وقت الرحلة ";
+                        return null;
+                      },
+                      ontap: () async {
+                        await DataBase.get(context).getimes();
+                        MyDropdown(
+                          controller: Time_AdditionalTrip,
+                          mylist: MyData.timeItems,
+                          context: context,
+                          title: "اختر وقت الرحلة",
+                        );
+                      }),
+                  DefoultFormField(
+                      controller: Date_AdditionalTrip,
+                      myhinttext: 'اختر تاريخ الرحلة',
+                      typeofkeybord: TextInputType.text,
+                      validate: (String? m) {
+                        if (m!.isEmpty) return "يجب اختيار التاريخ  ";
+                        return null;
+                      },
+                      readonly: true,
+                      ontap: () {
+                        showDatePicker(
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: ColorScheme.light(
+                                        primary: mycolor.blue,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: mycolor.blue,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  child: child ?? Container(),
-                                );
-                              },
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 6)))
-                          .then((value) {
-                        if (value != null) {
-                          Date_AdditionalTrip.text =
-                              value.toString().substring(0, 10);
+                                    child: child ?? Container(),
+                                  );
+                                },
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate:
+                                    DateTime.now().add(const Duration(days: 6)))
+                            .then((value) {
+                          if (value != null) {
+                            Date_AdditionalTrip.text =
+                                value.toString().substring(0, 10);
+                          }
+                        });
+                      }),
+                  DefoultFormField(
+                      controller: Type_AdditionalTrip,
+                      myhinttext: 'اختر نوع الرحلة',
+                      typeofkeybord: TextInputType.text,
+                      readonly: true,
+                      validate: (String? m) {
+                        if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
+                        return null;
+                      },
+                      ontap: () {
+                        MyDropdown(
+                          controller: Type_AdditionalTrip,
+                          mylist:
+                              AppCubit.get(context).Type_AdditionalTRipMenue,
+                          context: context,
+                          title: "اختر نوع الرحلة",
+                        );
+                      }),
+                  submitbutton(
+                      mytext: 'إرسال',
+                      pressthisbutton: () {
+                        if (formkey.currentState!.validate()) {
+                          var time = Time_AdditionalTrip.text.split(':');
+                          Duration x = Duration(
+                              hours: int.parse(time[0]),
+                              minutes: int.parse(time[1]));
+                          var tripDate =
+                              DateTime.parse(Date_AdditionalTrip.text).add(x);
+                          TempReservations AddTrip = new TempReservations(
+                            userId: MyData.user!.userId,
+                            TripType: Type_AdditionalTrip.text,
+                            date: tripDate,
+                            type: 1,
+                          );
+                          DataBase.get(context)
+                              .insertTrip(trip: [AddTrip]).then((value) {
+                            Date_AdditionalTrip.clear();
+                            Time_AdditionalTrip.clear();
+                            Type_AdditionalTrip.clear();
+                          });
                         }
-                      });
-                    }),
-                DefoultFormField(
-                    controller: Type_AdditionalTrip,
-                    myhinttext: 'اختر نوع الرحلة',
-                    typeofkeybord: TextInputType.text,
-                    readonly: true,
-                    validate: (String? m) {
-                      if (m!.isEmpty) return "يجب اختيار نوع الرحلة ";
-                      return null;
-                    },
-                    ontap: () {
-                      MyDropdown(
-                        controller: Type_AdditionalTrip,
-                        mylist: AppCubit.get(context).Type_AdditionalTRipMenue,
-                        context: context,
-                        title: "اختر نوع الرحلة",
-                      );
-                    }),
-                submitbutton(
-                    mytext: 'إرسال',
-                    pressthisbutton: () {
-                      var time = Time_AdditionalTrip.text.split(':');
-                      Duration x = Duration(
-                          hours: int.parse(time[0]),
-                          minutes: int.parse(time[1]));
-                      var tripDate =
-                          DateTime.parse(Date_AdditionalTrip.text).add(x);
-                      TempReservations AddTrip = new TempReservations(
-                        userId: MyData.user!.userId,
-                        TripType: Type_AdditionalTrip.text,
-                        date: tripDate,
-                        type: 1,
-                      );
-                      DataBase.get(context)
-                          .insertTrip(trip: [AddTrip]).then((value) {
-                        Date_AdditionalTrip.clear();
-                        Time_AdditionalTrip.clear();
-                        Type_AdditionalTrip.clear();
-                      });
-                    }),
-              ],
+                      }),
+                ],
+              ),
             );
           },
         ),
@@ -531,17 +501,6 @@ double WidthOfScreen(context) {
   return Widthtofscreen;
 }
 
-//============================================================
-Widget mysizedbox({
-  double? myheight,
-  double? mywidth,
-}) {
-  return SizedBox(
-    height: myheight,
-    width: mywidth,
-  );
-}
-
 //=============================Snakbar=================================
 mySnackBar(
     String content, BuildContext context, Color background, Color textColor) {
@@ -555,7 +514,6 @@ mySnackBar(
   ));
 }
 
-//********************** */
 //*************************************************************
 Widget MyList_Future_Trip(context) {
 // هذا التابع ليتم استدعائه في التاب بار فيو ويمثل الرحلات المستقبلية
@@ -596,7 +554,6 @@ Widget MyList_Pre_Trip(context) {
     itemCount: MyData.PreTripList.length,
   );
 }
-//=====================================================
 
 //************************** Trip information ****************************************** */
 
@@ -691,7 +648,7 @@ myLoading() {
     child: Center(
       child: CircularProgressIndicator(
         backgroundColor: mycolor.lightwight,
-        color: mycolor.blue,
+        color: mycolor.yello,
       ),
     ),
   );

@@ -217,7 +217,6 @@ class _MainPageState extends State<MainPage>
                   onTap: (p0) {
                     // MyAppcubit.changebottomnavbarScreen(p0);
                     if (p0 == 0) {
-                      DataBase.get(context).getimes();
                       GoforWard(
                         context,
                         WeekTable(),
